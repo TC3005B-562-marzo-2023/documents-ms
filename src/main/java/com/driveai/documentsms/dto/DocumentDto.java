@@ -1,35 +1,20 @@
-package com.driveai.documentsms.models;
-
-import jakarta.persistence.*;
+package com.driveai.documentsms.dto;
+import com.driveai.documentsms.models.Document;
+import com.driveai.documentsms.models.DocumentRequired;
 
 import java.sql.Timestamp;
 
-@Entity
-public class Document {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "document_id", nullable = false)
+public class DocumentDto {
     private int documentId;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "document_required_id", referencedColumnName = "document_required_id")
     private DocumentRequired documentRequiredId;
-    @Column(name = "external_id", nullable = false)
     private int externalId;
-    @Column(name = "external_table", nullable = false)
     private String externalTable;
-    @Column(name = "storage_url", nullable = false)
     private String storageUrl;
-    @Column(name = "status", nullable = false)
     private String status;
-    @Column(name = "ocr_checked", nullable = false)
-    private Boolean ocrChecked;
-    @Column(name = "created_at", nullable = false)
+    private boolean ocrChecked;
     private Timestamp createdAt;
-    @Column(name = "updated_at")
     private Timestamp updatedAt;
-    @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
-    @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
     public void setDocumentId(int documentId) {
@@ -56,7 +41,7 @@ public class Document {
         this.status = status;
     }
 
-    public void setOcrChecked(Boolean ocrChecked) {
+    public void setOcrChecked(boolean ocrChecked) {
         this.ocrChecked = ocrChecked;
     }
 
@@ -100,7 +85,7 @@ public class Document {
         return status;
     }
 
-    public Boolean getOcrChecked() {
+    public boolean isOcrChecked() {
         return ocrChecked;
     }
 
@@ -118,5 +103,19 @@ public class Document {
 
     public Timestamp getDeletedAt() {
         return deletedAt;
+    }
+
+    public DocumentDto(Document document) {
+        this.documentId = document.getDocumentId();
+        this.documentRequiredId = document.getDocumentRequiredId();
+        this.externalId = document.getExternalId();
+        this.externalTable = document.getExternalTable();
+        this.storageUrl = document.getStorageUrl();
+        this.status = document.getStatus();
+        this.ocrChecked = document.getOcrChecked();
+        this.createdAt = document.getCreatedAt();
+        this.updatedAt = document.getUpdatedAt();
+        this.isDeleted = document.isDeleted();
+        this.deletedAt = document.getUpdatedAt();
     }
 }

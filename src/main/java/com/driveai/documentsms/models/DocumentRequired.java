@@ -5,38 +5,33 @@ import jakarta.persistence.*;
 import java.sql.Timestamp;
 
 @Entity
-public class Document {
+public class DocumentRequired {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "document_id", nullable = false)
-    private int documentId;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "document_required_id", referencedColumnName = "document_required_id")
-    private DocumentRequired documentRequiredId;
+    @Column(name = "document_required_id", nullable = false)
+    private int documentRequiredId;
     @Column(name = "external_id", nullable = false)
     private int externalId;
     @Column(name = "external_table", nullable = false)
     private String externalTable;
-    @Column(name = "storage_url", nullable = false)
-    private String storageUrl;
-    @Column(name = "status", nullable = false)
-    private String status;
-    @Column(name = "ocr_checked", nullable = false)
-    private Boolean ocrChecked;
+    @Column(name = "document_name", nullable = false)
+    private String documentName;
+    @Column(name = "document_note")
+    private String documentNote;
+    @Column(name = "document_format", nullable = false)
+    private String documentFormat;
+    @Column(name = "process_type", nullable = false)
+    private String processType;
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private  Timestamp updatedAt;
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
-    public void setDocumentId(int documentId) {
-        this.documentId = documentId;
-    }
-
-    public void setDocumentRequiredId(DocumentRequired documentRequiredId) {
+    public void setDocumentRequiredId(int documentRequiredId) {
         this.documentRequiredId = documentRequiredId;
     }
 
@@ -48,16 +43,20 @@ public class Document {
         this.externalTable = externalTable;
     }
 
-    public void setStorageUrl(String storageUrl) {
-        this.storageUrl = storageUrl;
+    public void setDocumentName(String documentName) {
+        this.documentName = documentName;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setDocumentNote(String documentNote) {
+        this.documentNote = documentNote;
     }
 
-    public void setOcrChecked(Boolean ocrChecked) {
-        this.ocrChecked = ocrChecked;
+    public void setDocumentFormat(String documentFormat) {
+        this.documentFormat = documentFormat;
+    }
+
+    public void setProcessType(String processType) {
+        this.processType = processType;
     }
 
     public void setCreatedAt(Timestamp createdAt) {
@@ -76,11 +75,7 @@ public class Document {
         this.deletedAt = deletedAt;
     }
 
-    public int getDocumentId() {
-        return documentId;
-    }
-
-    public DocumentRequired getDocumentRequiredId() {
+    public int getDocumentRequiredId() {
         return documentRequiredId;
     }
 
@@ -92,16 +87,20 @@ public class Document {
         return externalTable;
     }
 
-    public String getStorageUrl() {
-        return storageUrl;
+    public String getDocumentName() {
+        return documentName;
     }
 
-    public String getStatus() {
-        return status;
+    public String getDocumentNote() {
+        return documentNote;
     }
 
-    public Boolean getOcrChecked() {
-        return ocrChecked;
+    public String getDocumentFormat() {
+        return documentFormat;
+    }
+
+    public String getProcessType() {
+        return processType;
     }
 
     public Timestamp getCreatedAt() {
