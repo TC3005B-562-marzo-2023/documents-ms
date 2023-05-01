@@ -5,10 +5,7 @@ import com.driveai.documentsms.services.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
@@ -17,4 +14,11 @@ import java.security.Principal;
 public class DocumentController {
     @Autowired
     DocumentService documentService;
+
+    @GetMapping("/list")
+    public ResponseEntity<?> getAllDocuments() {
+        return ResponseEntity.ok()
+                .header("Custom-Header", "foo")
+                .body(documentService.findAll());
+    }
 }
