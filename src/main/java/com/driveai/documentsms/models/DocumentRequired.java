@@ -3,6 +3,7 @@ package com.driveai.documentsms.models;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 public class DocumentRequired {
@@ -23,7 +24,7 @@ public class DocumentRequired {
     @Column(name = "process_type", nullable = false)
     private String processType;
     @Column(name = "created_at", nullable = false)
-    private Timestamp createdAt;
+    private Timestamp createdAt  = Timestamp.from(Instant.now());
     @Column(name = "updated_at")
     private  Timestamp updatedAt;
     @Column(name = "is_deleted", nullable = false)
