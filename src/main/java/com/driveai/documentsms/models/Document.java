@@ -1,8 +1,10 @@
 package com.driveai.documentsms.models;
 
+import com.driveai.documentsms.dto.DocumentUploadDto;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
+import java.time.Instant;
 
 @Entity
 public class Document {
@@ -20,18 +22,23 @@ public class Document {
     @Column(name = "storage_url", nullable = false)
     private String storageUrl;
     @Column(name = "status", nullable = false)
-    private String status;
+    private String status = "PENDING";
     @Column(name = "ocr_checked", nullable = false)
-    private Boolean ocrChecked;
+    private boolean ocrChecked = false;
     @Column(name = "created_at", nullable = false)
-    private Timestamp createdAt;
+    private Timestamp createdAt = Timestamp.from(Instant.now());
     @Column(name = "updated_at")
     private Timestamp updatedAt;
     @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
+    private boolean isDeleted = false;
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
 
+    public Document(DocumentUploadDto doc) {
+        this.externalId = doc.getExternalId();
+        this.externalTable = doc.getExternalTable();
+        this.storageUrl = doc.getStorageUrl();
+    }
     public void setDocumentId(int documentId) {
         this.documentId = documentId;
     }
