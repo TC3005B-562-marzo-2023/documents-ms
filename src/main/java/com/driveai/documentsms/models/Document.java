@@ -1,5 +1,6 @@
 package com.driveai.documentsms.models;
 
+import com.driveai.documentsms.dto.DocumentUploadDto;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
@@ -31,6 +32,12 @@ public class Document {
     private boolean isDeleted;
     @Column(name = "deleted_at")
     private Timestamp deletedAt;
+
+    public Document(DocumentUploadDto doc) {
+        this.externalId = doc.getExternalId();
+        this.externalTable = doc.getExternalTable();
+        this.storageUrl = doc.getStorageUrl();
+    }
 
     public void setDocumentId(int documentId) {
         this.documentId = documentId;
