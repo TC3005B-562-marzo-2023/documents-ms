@@ -31,6 +31,19 @@ public class DocumentRequiredController {
         return new ResponseEntity<>(documentRequired, HttpStatus.CREATED);
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<?> updateDocumentRequired (@RequestBody DocumentRequired documentRequired) {
+        try {
+            DocumentRequired newDoc = documentRequiredService.updateDocumentRequired(documentRequired);
+            return new ResponseEntity<>(newDoc, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            Map<String,String> response = new HashMap<>();
+            response.put("message", "Document Type could not be updated: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/list")
     public ResponseEntity<?> getAllDocumentRequired(Principal principal) {
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;

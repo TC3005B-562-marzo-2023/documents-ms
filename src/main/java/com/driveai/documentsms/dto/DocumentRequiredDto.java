@@ -45,10 +45,6 @@ public class DocumentRequiredDto {
         this.processType = processType;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
@@ -89,10 +85,6 @@ public class DocumentRequiredDto {
         return processType;
     }
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
     public Timestamp getUpdatedAt() {
         return updatedAt;
     }
@@ -113,7 +105,6 @@ public class DocumentRequiredDto {
         this.documentNote = documentRequired.getDocumentNote();
         this.documentFormat = documentRequired.getDocumentFormat();
         this.processType = documentRequired.getProcessType();
-        this.createdAt = documentRequired.getCreatedAt();
         this.updatedAt = documentRequired.getUpdatedAt();
         this.isDeleted = documentRequired.isDeleted();
         this.deletedAt = documentRequired.getDeletedAt();
