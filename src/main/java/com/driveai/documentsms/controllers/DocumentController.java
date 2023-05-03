@@ -3,8 +3,6 @@ package com.driveai.documentsms.controllers;
 import com.amazonaws.HttpMethod;
 import com.driveai.documentsms.dto.DocumentUploadDto;
 import com.driveai.documentsms.models.Document;
-import com.driveai.documentsms.services.AwsS3Service;
-import com.driveai.documentsms.services.DocumentRequiredService;
 import com.driveai.documentsms.services.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,7 +20,7 @@ public class DocumentController {
     @Autowired
     DocumentService documentService;
 
-    @PostMapping("/get-upload-url")
+    @GetMapping("/get-upload-url")
     public ResponseEntity<HashMap<String, String>> getUploadURL() {
         String fileName = String.valueOf(UUID.randomUUID());
         HashMap<String, String> message = new HashMap<>();

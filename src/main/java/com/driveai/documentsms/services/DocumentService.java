@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class DocumentService {
@@ -32,7 +31,7 @@ public class DocumentService {
 
     public Document storeUploadedDocumentInDB(DocumentUploadDto doc) throws Exception {
         Document documentToSave = new Document(doc);
-        DocumentRequired documentRequired = documentRequiredService.findById(doc.getExternalId());
+        DocumentRequired documentRequired = documentRequiredService.findById(doc.getDocumentRequiredId());
         documentToSave.setDocumentRequiredId(documentRequired);
         printDocument(documentToSave);
         return documentRepository.save(documentToSave);
