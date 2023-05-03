@@ -43,12 +43,6 @@ public class DocumentController {
         return new ResponseEntity<>(storedDoc, HttpStatus.OK);
     }
 
-    public void printDocument(DocumentUploadDto document) {
-        System.out.println("Document Required ID: " + document.getDocumentRequiredId());
-        System.out.println("External ID: " + document.getExternalId());
-        System.out.println("External Table: " + document.getExternalTable());
-    }
-
     @GetMapping("/list")
     public ResponseEntity<?> getAllDocuments() {
         return ResponseEntity.ok()

@@ -33,22 +33,9 @@ public class DocumentService {
         Document documentToSave = new Document(doc);
         DocumentRequired documentRequired = documentRequiredService.findById(doc.getDocumentRequiredId());
         documentToSave.setDocumentRequiredId(documentRequired);
-        printDocument(documentToSave);
         return documentRepository.save(documentToSave);
     }
 
-    public void printDocument(Document document) {
-        System.out.println("Document ID: " + document.getDocumentId());
-        System.out.println("Document Required ID: " + document.getDocumentRequiredId());
-        System.out.println("External ID: " + document.getExternalId());
-        System.out.println("External Table: " + document.getExternalTable());
-        System.out.println("Storage URL: " + document.getStorageUrl());
-        System.out.println("Status: " + document.getStatus());
-        System.out.println("Created At: " + document.getCreatedAt());
-        System.out.println("Updated At: " + document.getUpdatedAt());
-        System.out.println("Is Deleted: " + document.isDeleted());
-        System.out.println("Deleted At: " + document.getDeletedAt());
-    }
     public List<DocumentDto> findAll() {
         List<Document> documentList = documentRepository.findAll();
         List<DocumentDto> results = new ArrayList<>();
