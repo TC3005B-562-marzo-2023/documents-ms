@@ -24,10 +24,10 @@ public class DocumentRequiredService {
     }
     public DocumentRequired updateDocumentRequired(DocumentRequired documentRequired) throws Exception {
         Optional<DocumentRequired> documentInDB = documentRequiredRepository.findById(documentRequired.getDocumentRequiredId());
-        if (!documentInDB.isPresent()) { //Check if documentRequired exist
+        if (!documentInDB.isPresent()) { //Check if documentRequired exists
             throw new Exception("Unable to find document with id: "+ documentRequired.getDocumentRequiredId());
         }
-        else if (documentInDB.isPresent()){ //If documetRequired exist are changes being made? If not, launch an exception.
+        else if (documentInDB.isPresent()){ //If documetRequired exists are changes being made? If not, launch an exception.
             DocumentRequired originalDocument = documentInDB.get();
             if(documentRequired.getDocumentName().equals(originalDocument.getDocumentName()) &&
                 documentRequired.getExternalTable().equals(originalDocument.getExternalTable()) &&
