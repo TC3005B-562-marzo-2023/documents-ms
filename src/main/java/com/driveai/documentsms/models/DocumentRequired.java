@@ -23,10 +23,8 @@ public class DocumentRequired {
     private String documentFormat;
     @Column(name = "process_type", nullable = false)
     private String processType;
-    @Column(name = "created_at", nullable = false)
-    private Timestamp createdAt  = Timestamp.from(Instant.now());
     @Column(name = "updated_at")
-    private  Timestamp updatedAt;
+    private  Timestamp updatedAt = Timestamp.from(Instant.now());
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
     @Column(name = "deleted_at")
@@ -58,10 +56,6 @@ public class DocumentRequired {
 
     public void setProcessType(String processType) {
         this.processType = processType;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
     }
 
     public void setUpdatedAt(Timestamp updatedAt) {
@@ -102,10 +96,6 @@ public class DocumentRequired {
 
     public String getProcessType() {
         return processType;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
     }
 
     public Timestamp getUpdatedAt() {
