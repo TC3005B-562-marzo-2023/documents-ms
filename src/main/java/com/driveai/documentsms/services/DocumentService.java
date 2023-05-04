@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DocumentService {
@@ -49,4 +50,20 @@ public class DocumentService {
         }
         return results;
     }
+
+    /*public DocumentDto findDocumentById(int documentId) {
+        Document document = documentRepository.findById(documentId)
+                .orElseThrow(() -> new DocumentNotFoundException("El documento con el id " + documentId + " no se encuentra."));
+        return documentMapper.toDocumentDto(document);
+    }*/
+
+    public Document findDocumentById(int documentId) throws Exception {
+        Optional<Document> documentInDB = documentRepository.findById(documentId);
+        if (!documentInDB.isPresent()) { //Check if documentRequired exists
+            throw new Exception("Unable to find document with id: "+ documentId);
+        }
+        Document document = documentInDB.get();
+        return document; //Save document object
+    }
+
 }

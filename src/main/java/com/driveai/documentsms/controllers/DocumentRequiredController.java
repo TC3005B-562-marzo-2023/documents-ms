@@ -39,7 +39,7 @@ public class DocumentRequiredController {
         }
         catch (Exception e) {
             Map<String,String> response = new HashMap<>();
-            response.put("message", "Document Type could not be updated: " + e.getMessage());
+            response.put("message", "DocumentRequired could not be updated: " + e.getMessage());
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
