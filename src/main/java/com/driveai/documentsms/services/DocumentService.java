@@ -2,7 +2,9 @@ package com.driveai.documentsms.services;
 
 import com.amazonaws.HttpMethod;
 import com.driveai.documentsms.dto.DocumentDto;
+import com.driveai.documentsms.dto.DocumentUploadDto;
 import com.driveai.documentsms.models.Document;
+import com.driveai.documentsms.models.DocumentRequired;
 import com.driveai.documentsms.repositories.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,6 +27,13 @@ public class DocumentService {
 
     public String createUploadURL(String fileName) {
         return awsS3Service.generatePreSignedUrl(fileName, "drive-ai-ccm", HttpMethod.PUT);
+    }
+
+    public Document storeUploadedDocumentInDB(DocumentUploadDto doc) throws Exception {
+        Document documentToSave = new Document(doc);
+        DocumentRequired documentRequired = documentRequiredService.findById(doc.getDocumentRequiredId());
+        documentToSave.setDocumentRequiredId(documentRequired);
+        return documentRepository.save(documentToSave);
     }
 
     public List<DocumentDto> findAll() {
