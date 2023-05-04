@@ -16,9 +16,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/document")
 public class DocumentController {
-
     @Autowired
     DocumentService documentService;
+
+    @GetMapping("/get-req-document-status")
+    public ResponseEntity<?> getDocumentStatus(@RequestParam("id") int externalId, @RequestParam("table") String externalTable) {
+        return ResponseEntity.ok().body(documentService.getDocumentStatus(externalId, externalTable));
+    }
 
     @GetMapping("/get-upload-url")
     public ResponseEntity<HashMap<String, String>> getUploadURL() {

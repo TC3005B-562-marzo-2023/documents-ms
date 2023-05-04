@@ -36,6 +36,10 @@ public class DocumentService {
         return documentRepository.save(documentToSave);
     }
 
+    public String getDocumentStatus(int externalId, String externalTable) {
+        return documentRepository.callValidateDocumentsStoredProcedure(externalId, externalTable);
+    }
+
     public List<DocumentDto> findAll() {
         List<Document> documentList = documentRepository.findAll();
         List<DocumentDto> results = new ArrayList<>();
