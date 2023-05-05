@@ -31,10 +31,10 @@ public class DocumentRequiredController {
         return new ResponseEntity<>(documentRequired, HttpStatus.CREATED);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<?> updateDocumentRequired (@RequestBody DocumentRequired documentRequired) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateDocumentRequired (@PathVariable("id") int id, @RequestBody DocumentRequired documentRequired) {
         try {
-            DocumentRequired newDoc = documentRequiredService.updateDocumentRequired(documentRequired);
+            DocumentRequired newDoc = documentRequiredService.updateDocumentRequiredById(id, documentRequired);
             return new ResponseEntity<>(newDoc, HttpStatus.OK);
         }
         catch (Exception e) {
@@ -44,9 +44,21 @@ public class DocumentRequiredController {
         }
     }
 
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<?> findByIdDocumentRequired(@PathVariable("id") int id) {
+        try {
+            return new ResponseEntity<>(documentRequiredService.findById(id),HttpStatus.OK);
+
+        } catch (Exception e) {
+            Map<String,String> response = new HashMap<>();
+            response.put("message", "DocumentRequired could not be updated: " + e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/list")
-    public ResponseEntity<?> getAllDocumentRequired(Principal principal) {
-        JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
+    public ResponseEntity<?> getAllDocumentRequired() {
+        //JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
         return new ResponseEntity<>(documentRequiredService.findAll(),HttpStatus.OK);
     }
 
