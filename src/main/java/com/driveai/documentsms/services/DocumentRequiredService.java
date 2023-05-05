@@ -18,7 +18,8 @@ public class DocumentRequiredService {
     DocumentRequiredRepository documentRequiredRepository;
 
     public DocumentRequired findById(int id) throws Exception {
-        return documentRequiredRepository.findById(id).orElseThrow(() -> new Exception("User not found with id: " + id));
+        return documentRequiredRepository.findById(id).orElseThrow(()
+                -> new Exception("Document Required not found with id: " + id));
     }
 
     public DocumentRequired saveRequiredDocument(DocumentRequired documentRequired) {
@@ -27,24 +28,24 @@ public class DocumentRequiredService {
         }
         return documentRequired;
     }
-    public DocumentRequired updateDocumentRequired(DocumentRequired documentRequired) throws Exception {
-        Optional<DocumentRequired> documentInDB = documentRequiredRepository.findById(documentRequired.getDocumentRequiredId());
-        if (!documentInDB.isPresent()) { //Check if documentRequired exists
-            throw new Exception("Unable to find document with id: "+ documentRequired.getDocumentRequiredId());
+    public DocumentRequired updateDocumentRequiredById(int id, DocumentRequired documentRequired) throws Exception {
+        Optional<DocumentRequired> documentInDB = documentRequiredRepository.findById(id);
+        if (documentInDB.isEmpty()) { //Check if documentRequired exists
+            throw new Exception("Unable to find document with id: " + id);
         }
-        else if (documentInDB.isPresent()){ //If documetRequired exists are changes being made? If not, launch an exception.
+        else { //If document Required exists are changes being made? If not, launch an exception.
             DocumentRequired originalDocument = documentInDB.get();
-            if(documentRequired.getDocumentName().equals(originalDocument.getDocumentName()) &&
-                documentRequired.getExternalTable().equals(originalDocument.getExternalTable()) &&
-                documentRequired.getDocumentNote().equals(originalDocument.getDocumentNote()) &&
-                documentRequired.getDocumentFormat().equals(originalDocument.getDocumentFormat()) &&
-                documentRequired.getProcessType().equals(originalDocument.getProcessType())){
-                throw new Exception("Unable to update document with id: "+ documentRequired.getDocumentRequiredId() + ", since no data was changed.");
+            if (documentRequired.getDocumentName().equals(originalDocument.getDocumentName()) &&
+                    documentRequired.getExternalTable().equals(originalDocument.getExternalTable()) &&
+                    documentRequired.getDocumentNote().equals(originalDocument.getDocumentNote()) &&
+                    documentRequired.getDocumentFormat().equals(originalDocument.getDocumentFormat()) &&
+                    documentRequired.getProcessType().equals(originalDocument.getProcessType())) {
+                throw new Exception("Unable to update document with id '" + id + "', since no data was changed.");
             }
         }
+        documentRequired.setDocumentRequiredId(id);
         documentRequired = documentRequiredRepository.save(documentRequired);
-
-        return documentRequired; //Save document object
+        return documentRequired;//Save document object
     }
 
     public List<DocumentRequiredDto> findAll() {
