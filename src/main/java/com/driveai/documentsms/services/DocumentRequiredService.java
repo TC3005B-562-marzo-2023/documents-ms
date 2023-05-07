@@ -27,6 +27,13 @@ public class DocumentRequiredService {
 
     public DocumentRequired findDocumentRequiredById(int id, String email) throws Exception {
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+        int userId = userDealershipDto.getId();
+        String title = "Document Required Found";
+        String description = "The user with id "+userId+" found document required with id "+id;
+        String method = "GET";
+        int status = 200;
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
 
         return documentRequiredRepository.findById(id).orElseThrow(() -> new Exception("Document Required not found with id: " + id));
     }
@@ -56,12 +63,19 @@ public class DocumentRequiredService {
         newDocumentRequired.setProcessType(documentRequired.getProcessType());
 
         logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
         return documentRequiredRepository.save(newDocumentRequired);
     }
 
     public DocumentRequired updateDocumentRequiredById(int id, UpdateDocumentRequiredDto documentRequired, String email) throws Exception {
         Optional<DocumentRequired> documentInDB = documentRequiredRepository.findById(id);
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
+        int userId = userDealershipDto.getId();
+        String title = "Document Required Updated";
+        String description = "The user with id "+userId+" updated document required with id "+id;
+        String method = "PUT";
+        int status = 200;
 
         if (documentInDB.isEmpty()) throw new Exception("Unable to find document with id: " + id);
         if(documentInDB.get().isDeleted()) throw new Exception("Document is deleted");
@@ -72,11 +86,19 @@ public class DocumentRequiredService {
         documentInDB.get().setProcessType(documentRequired.getProcessType());
         documentInDB.get().setUpdatedAt(Timestamp.from(Instant.now()));
 
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
         return documentRequiredRepository.save(documentInDB.get());
     }
 
     public List<DocumentRequiredDto> findAll(String email) throws Exception {
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
+        int userId = userDealershipDto.getId();
+        String title = "Document Required Found All";
+        String description = "The user with id "+userId+" found all document required";
+        String method = "GET";
+        int status = 200;
 
         List<DocumentRequired> documentRequiredList = documentRequiredRepository.findAll();
         List<DocumentRequiredDto> results = new ArrayList<>();
@@ -84,6 +106,9 @@ public class DocumentRequiredService {
             DocumentRequiredDto dto = new DocumentRequiredDto(d);
             results.add(dto);
         }
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
         return results;
     }
 
@@ -91,14 +116,29 @@ public class DocumentRequiredService {
         Optional<DocumentRequired> documentInDB = documentRequiredRepository.findById(id);
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
 
+        int userId = userDealershipDto.getId();
+        String title = "Document Required Deleted";
+        String description = "The user with id "+userId+" deleted document required with id "+id;
+        String method = "DELETE";
+        int status = 200;
+
         if(documentInDB.isEmpty()) throw new Exception("Unable to find document with id: " + id);
 
         documentInDB.get().setDeleted(true);
         documentInDB.get().setDeletedAt(Timestamp.from(Instant.now()));
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
         return documentRequiredRepository.save(documentInDB.get());
     }
     public List<DocumentRequiredDto> getDocumentsRequiredForTestDrive(int id, String email) throws Exception {
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
+        int userId = userDealershipDto.getId();
+        String title = "Document Required Found All Test Drive";
+        String description = "The user with id "+userId+" found all document required for test drive";
+        String method = "GET";
+        int status = 200;
 
         List<DocumentRequired> documentRequiredList = documentRequiredRepository.findAll();
         List<DocumentRequiredDto> results = new ArrayList<>();
@@ -111,10 +151,21 @@ public class DocumentRequiredService {
                 results.add(dto);
             }
        }
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
         return results;
     }
 
     public List<DocumentRequiredDto> getDocumentsRequiredForSale(int id, String email) throws Exception {
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
+        int userId = userDealershipDto.getId();
+        String title = "Document Required Found All Sale";
+        String description = "The user with id "+userId+" found all document required for sale";
+        String method = "GET";
+        int status = 200;
+
         List<DocumentRequired> documentRequiredList = documentRequiredRepository.findAll();
         List<DocumentRequiredDto> results = new ArrayList<>();
         for(DocumentRequired d: documentRequiredList) {
@@ -126,6 +177,9 @@ public class DocumentRequiredService {
                 results.add(dto);
             }
         }
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+        
         return results;
     }
 

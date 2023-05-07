@@ -6,6 +6,7 @@ import com.driveai.documentsms.dto.CreateDocumentDto;
 import com.driveai.documentsms.dto.DocumentDto;
 import com.driveai.documentsms.dto.UpdateDocumentDto;
 import com.driveai.documentsms.dto.UserDealershipDto;
+import com.driveai.documentsms.factory.LogFactory;
 import com.driveai.documentsms.models.Document;
 import com.driveai.documentsms.models.DocumentRequired;
 import com.driveai.documentsms.repositories.DocumentRepository;
@@ -30,6 +31,8 @@ public class DocumentService {
     DocumentRequiredRepository documentRequiredRepository;
     @Autowired
     UserClient userClient;
+    @Autowired
+    LogService logService;
 
     private AwsS3Service awsS3Service;
     @Autowired
@@ -41,14 +44,29 @@ public class DocumentService {
         return awsS3Service.generatePreSignedUrl(fileName, "drive-ai-ccm", HttpMethod.PUT);
     }
 
-    public Document findDocumentById(int documentId, String email) throws Exception {
+    public Document findDocumentById(int id, String email) throws Exception {
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
-        return documentRepository.findById(documentId).orElseThrow(() -> new Exception("Document not found with id: " + documentId));
+
+        int userId = userDealershipDto.getId();
+        String title = "Document Found";
+        String description = "The user with id "+userId+" found document with id "+id;
+        String method = "GET";
+        int status = 200;
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
+        return documentRepository.findById(id).orElseThrow(() -> new Exception("Document not found with id: " + id));
     }
 
     public Document saveDocument(CreateDocumentDto document, String email) throws Exception { //DocumentUploadDto
         DocumentRequired documentRequired = documentRequiredService.findDocumentRequiredById(document.getDocumentRequiredId(), email);
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
+        int userId = userDealershipDto.getId();
+        String title = "Document Created";
+        String description = "The user with id "+userId+" created document";
+        String method = "POST";
+        int status = 200;
 
         if(documentRequired == null) throw new Exception("Document required not found with id: " + document.getDocumentRequiredId());
 
@@ -66,12 +84,20 @@ public class DocumentService {
         newDoc.setStorageUrl(document.getStorageUrl());
         newDoc.setCreatedAt(Timestamp.from(Instant.now()));
 
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
         return documentRepository.save(newDoc);
     }
 
     public Document updateDocumentById(int id, UpdateDocumentDto document, String email) throws Exception {
         Optional<Document> documentInDB = documentRepository.findById(id);
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
+        int userId = userDealershipDto.getId();
+        String title = "Document Updated";
+        String description = "The user with id "+userId+" updated document with id "+id;
+        String method = "PUT";
+        int status = 200;
 
         if (documentInDB.isEmpty())  throw new Exception("Unable to find document with id: " + id);
         if(documentInDB.get().isDeleted()) throw new Exception("Document is deleted");
@@ -80,6 +106,8 @@ public class DocumentService {
         documentInDB.get().setStatus(document.getStatus());
         documentInDB.get().setOcrChecked(document.isOcrChecked());
         documentInDB.get().setUpdatedAt(Timestamp.from(Instant.now()));
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
 
         return documentRepository.save(documentInDB.get());
     }
@@ -91,12 +119,21 @@ public class DocumentService {
     public List<DocumentDto> findAll(String email) throws Exception {
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
 
+        int userId = userDealershipDto.getId();
+        String title = "Document Found All";
+        String description = "The user with id "+userId+" found all documents";
+        String method = "GET";
+        int status = 200;
+
         List<Document> documentList = documentRepository.findAll();
         List<DocumentDto> results = new ArrayList<>();
         for(Document d: documentList) {
             DocumentDto dto = new DocumentDto(d);
             results.add(dto);
         }
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
         return results;
     }
 
@@ -104,15 +141,30 @@ public class DocumentService {
         Optional<Document> documentInDB = documentRepository.findById(id);
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
 
+        int userId = userDealershipDto.getId();
+        String title = "Document Deleted";
+        String description = "The user with id "+userId+" deleted document with id "+id;
+        String method = "DELETE";
+        int status = 200;
+
         if(documentInDB.isEmpty()) throw new Exception("Unable to find document with id: " + id);
 
         documentInDB.get().setDeleted(true);
         documentInDB.get().setDeletedAt(Timestamp.from(Instant.now()));
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
         return documentRepository.save(documentInDB.get());
     }
 
     public List<DocumentDto> getDocumentsForUser(int id, String email) throws Exception {
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
+        int userId = userDealershipDto.getId();
+        String title = "Document Found All For User";
+        String description = "The user with id "+userId+" found all documents for user with id "+id;
+        String method = "GET";
+        int status = 200;
 
         List<Document> documentList = documentRepository.findAll();
         List<DocumentDto> results = new ArrayList<>();
@@ -125,6 +177,9 @@ public class DocumentService {
                 results.add(dto);
             }
         }
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
         return results;
     }
 }

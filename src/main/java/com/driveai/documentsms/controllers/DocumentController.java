@@ -76,7 +76,7 @@ public class DocumentController {
         message.put("uploadURL", uploadURL);
         return new ResponseEntity<>(documentService.createUploadURL(fileName), HttpStatus.OK);
     }
-    @GetMapping("/getDocumentsForUser/{id}")
+    @GetMapping("/get-documents-for-user/{id}")
     public ResponseEntity<List<DocumentDto>> getDocumentsForUser(@PathVariable int id, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
         Jwt principalJwt = (Jwt) token.getPrincipal();

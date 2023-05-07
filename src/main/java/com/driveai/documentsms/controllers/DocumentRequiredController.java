@@ -55,14 +55,14 @@ public class DocumentRequiredController {
         String email = principalJwt.getClaim("email");
         return new ResponseEntity<>(documentRequiredService.deleteDocumentRequiredById(id, email),HttpStatus.OK);
     }
-    @GetMapping("/getDocumentsRequiredForTestDrive/{id}")
+    @GetMapping("/get-documents-required-for-test-drive/{id}")
     public ResponseEntity<List<DocumentRequiredDto>> forDemo(@PathVariable("id") int id, Principal principal) throws Exception {
         JwtAuthenticationToken token=(JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
         return new ResponseEntity<>(documentRequiredService.getDocumentsRequiredForTestDrive(id, email),HttpStatus.OK);
     }
-    @GetMapping("/getDocumentsRequiredForSale/{id}")
+    @GetMapping("/get-documents-required-for-sale/{id}")
     public ResponseEntity<List<DocumentRequiredDto>> forSale(@PathVariable("id") int id, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
         Jwt principalJwt = (Jwt) token.getPrincipal();
