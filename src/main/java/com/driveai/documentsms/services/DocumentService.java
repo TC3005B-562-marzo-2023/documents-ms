@@ -1,8 +1,11 @@
 package com.driveai.documentsms.services;
 
 import com.amazonaws.HttpMethod;
+import com.driveai.documentsms.client.UserClient;
+import com.driveai.documentsms.dto.CreateDocumentDto;
 import com.driveai.documentsms.dto.DocumentDto;
-import com.driveai.documentsms.dto.DocumentUploadDto;
+import com.driveai.documentsms.dto.UpdateDocumentDto;
+import com.driveai.documentsms.dto.UserDealershipDto;
 import com.driveai.documentsms.models.Document;
 import com.driveai.documentsms.models.DocumentRequired;
 import com.driveai.documentsms.repositories.DocumentRepository;
@@ -25,6 +28,8 @@ public class DocumentService {
     DocumentRequiredService documentRequiredService;
     @Autowired
     DocumentRequiredRepository documentRequiredRepository;
+    @Autowired
+    UserClient userClient;
 
     private AwsS3Service awsS3Service;
     @Autowired
@@ -37,29 +42,46 @@ public class DocumentService {
     }
 
     public Document findDocumentById(int documentId, String email) throws Exception {
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
         return documentRepository.findById(documentId).orElseThrow(() -> new Exception("Document not found with id: " + documentId));
     }
 
-    public Document saveDocument(Document document, String email) throws Exception { //DocumentUploadDto
-        if(document.getDocumentId() != 0) throw new Exception("Cannot pass the primary id as a parameter");
+    public Document saveDocument(CreateDocumentDto document, String email) throws Exception { //DocumentUploadDto
+        DocumentRequired documentRequired = documentRequiredService.findDocumentRequiredById(document.getDocumentRequiredId(), email);
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
 
-        document.setCreatedAt(Timestamp.from(Instant.now()));
-        return documentRepository.save(document);
+        if(documentRequired == null) throw new Exception("Document required not found with id: " + document.getDocumentRequiredId());
+
+        /*
+        if(userDealershipDto.getUser_type().equals("AUTOMOTIVE_GROUP_ADMIN")) {
+            documentRequired.setExternalTable("automotive_group");
+            //documentRequired.setExternalId(userDealershipDto.getDealershipId());
+        } else {
+            documentRequired.setExternalTable("user");
+            documentRequired.setExternalId(userDealershipDto.getId());
+        }*/
+
+        Document newDoc = new Document();
+        newDoc.setDocumentRequiredId(documentRequired);
+        newDoc.setStorageUrl(document.getStorageUrl());
+        newDoc.setCreatedAt(Timestamp.from(Instant.now()));
+
+        return documentRepository.save(newDoc);
     }
 
-    public Document updateDocumentById(int id, Document document, String email) throws Exception {
+    public Document updateDocumentById(int id, UpdateDocumentDto document, String email) throws Exception {
         Optional<Document> documentInDB = documentRepository.findById(id);
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
 
         if (documentInDB.isEmpty())  throw new Exception("Unable to find document with id: " + id);
         if(documentInDB.get().isDeleted()) throw new Exception("Document is deleted");
 
-        document.setDocumentId(id);
-        document.setCreatedAt(documentInDB.get().getCreatedAt());
-        document.setDeletedAt(documentInDB.get().getDeletedAt());
-        document.setDeleted(documentInDB.get().isDeleted());
-        document.setUpdatedAt(Timestamp.from(Instant.now()));
+        documentInDB.get().setStorageUrl(document.getStorageUrl());
+        documentInDB.get().setStatus(document.getStatus());
+        documentInDB.get().setOcrChecked(document.isOcrChecked());
+        documentInDB.get().setUpdatedAt(Timestamp.from(Instant.now()));
 
-        return documentRepository.save(document);
+        return documentRepository.save(documentInDB.get());
     }
 
     public String getDocumentStatus(int externalId, String externalTable) {
@@ -67,6 +89,8 @@ public class DocumentService {
     }
 
     public List<DocumentDto> findAll(String email) throws Exception {
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
         List<Document> documentList = documentRepository.findAll();
         List<DocumentDto> results = new ArrayList<>();
         for(Document d: documentList) {
@@ -78,16 +102,18 @@ public class DocumentService {
 
     public Document deleteDocumentById(int id, String email) throws Exception {
         Optional<Document> documentInDB = documentRepository.findById(id);
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
 
         if(documentInDB.isEmpty()) throw new Exception("Unable to find document with id: " + id);
 
         documentInDB.get().setDeleted(true);
         documentInDB.get().setDeletedAt(Timestamp.from(Instant.now()));
-
         return documentRepository.save(documentInDB.get());
     }
 
     public List<DocumentDto> getDocumentsForUser(int id, String email) throws Exception {
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
         List<Document> documentList = documentRepository.findAll();
         List<DocumentDto> results = new ArrayList<>();
         for(Document d: documentList) {

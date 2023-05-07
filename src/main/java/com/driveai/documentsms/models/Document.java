@@ -24,7 +24,7 @@ public class Document {
     @Column(name = "storage_url", nullable = false)
     private String storageUrl;
     @Column(name = "status")
-    private String status;
+    private String status = "pending";
     @Column(name = "ocr_checked")
     private boolean ocrChecked;
     @Column(name = "created_at", updatable = false)

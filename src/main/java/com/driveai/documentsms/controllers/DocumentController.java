@@ -1,6 +1,8 @@
 package com.driveai.documentsms.controllers;
 
 import com.driveai.documentsms.dto.DocumentDto;
+import com.driveai.documentsms.dto.CreateDocumentDto;
+import com.driveai.documentsms.dto.UpdateDocumentDto;
 import com.driveai.documentsms.models.Document;
 import com.driveai.documentsms.services.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,16 +29,14 @@ public class DocumentController {
         return new ResponseEntity<>(documentService.findAll(email),HttpStatus.OK);
     }
     @PostMapping("/create") // DocumentUploadDto
-    //@JsonView(Views.Post.class)
-    public ResponseEntity<Document> createDocument(@RequestBody Document document, Principal principal) throws Exception {
+    public ResponseEntity<Document> createDocument(@RequestBody CreateDocumentDto document, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
         return new ResponseEntity<>(documentService.saveDocument(document, email), HttpStatus.CREATED);
     }
     @PutMapping("/update/{id}")
-    //@JsonView(Views.Put.class)
-    public ResponseEntity<Document> updateDocument(@PathVariable("id") int id, @RequestBody Document document, Principal principal) throws Exception {
+    public ResponseEntity<Document> updateDocument(@PathVariable("id") int id, @RequestBody UpdateDocumentDto document, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");

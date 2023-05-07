@@ -1,7 +1,9 @@
 package com.driveai.documentsms.services;
 
 import com.driveai.documentsms.client.UserClient;
+import com.driveai.documentsms.dto.CreateDocumentRequiredDto;
 import com.driveai.documentsms.dto.DocumentRequiredDto;
+import com.driveai.documentsms.dto.UpdateDocumentRequiredDto;
 import com.driveai.documentsms.dto.UserDealershipDto;
 import com.driveai.documentsms.factory.LogFactory;
 import com.driveai.documentsms.models.DocumentRequired;
@@ -24,11 +26,14 @@ public class DocumentRequiredService {
     LogService logService;
 
     public DocumentRequired findDocumentRequiredById(int id, String email) throws Exception {
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
         return documentRequiredRepository.findById(id).orElseThrow(() -> new Exception("Document Required not found with id: " + id));
     }
 
-    public DocumentRequired saveRequiredDocument(DocumentRequired documentRequired, String email) throws Exception {
+    public DocumentRequired saveRequiredDocument(CreateDocumentRequiredDto documentRequired, String email) throws Exception {
         UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+        DocumentRequired newDocumentRequired = new DocumentRequired();
 
         int userId = userDealershipDto.getId();
         String title = "Document Required Created";
@@ -37,37 +42,37 @@ public class DocumentRequiredService {
         int status = 201;
 
         if(userDealershipDto.getUser_type().equals("MANAGER")) {
-            documentRequired.setExternalTable("dealership");
+            newDocumentRequired.setExternalTable("dealership");
             //documentRequired.setExternalId(userDealershipDto.getDealershipId());
         } else {
-            documentRequired.setExternalTable("user");
-            documentRequired.setExternalId(userDealershipDto.getId());
+            newDocumentRequired.setExternalTable("user");
+            newDocumentRequired.setExternalId(userDealershipDto.getId());
         }
 
-        documentRequired.setCreatedAt(Timestamp.from(Instant.now()));
-
-        if (documentRequired.getDocumentRequiredId() != 0) {
-            logService.saveLog(LogFactory.createLog(userId,title,description,method,400));
-            throw new Exception("Cannot pass the primary id as a parameter");
-        }
+        newDocumentRequired.setCreatedAt(Timestamp.from(Instant.now()));
+        newDocumentRequired.setDocumentName(documentRequired.getDocumentName());
+        newDocumentRequired.setDocumentNote(documentRequired.getDocumentNote());
+        newDocumentRequired.setDocumentFormat(documentRequired.getDocumentFormat());
+        newDocumentRequired.setProcessType(documentRequired.getProcessType());
 
         logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
-        return documentRequiredRepository.save(documentRequired);
+        return documentRequiredRepository.save(newDocumentRequired);
     }
 
-    public DocumentRequired updateDocumentRequiredById(int id, DocumentRequired documentRequired, String email) throws Exception {
+    public DocumentRequired updateDocumentRequiredById(int id, UpdateDocumentRequiredDto documentRequired, String email) throws Exception {
         Optional<DocumentRequired> documentInDB = documentRequiredRepository.findById(id);
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
 
         if (documentInDB.isEmpty()) throw new Exception("Unable to find document with id: " + id);
         if(documentInDB.get().isDeleted()) throw new Exception("Document is deleted");
 
-        documentRequired.setDocumentRequiredId(id);
-        documentRequired.setCreatedAt(documentInDB.get().getCreatedAt());
-        documentRequired.setDeletedAt(documentInDB.get().getDeletedAt());
-        documentRequired.setDeleted(documentInDB.get().isDeleted());
-        documentRequired.setUpdatedAt(Timestamp.from(Instant.now()));
+        documentInDB.get().setDocumentName(documentRequired.getDocumentName());
+        documentInDB.get().setDocumentNote(documentRequired.getDocumentNote());
+        documentInDB.get().setDocumentFormat(documentRequired.getDocumentFormat());
+        documentInDB.get().setProcessType(documentRequired.getProcessType());
+        documentInDB.get().setUpdatedAt(Timestamp.from(Instant.now()));
 
-        return documentRequiredRepository.save(documentRequired);
+        return documentRequiredRepository.save(documentInDB.get());
     }
 
     public List<DocumentRequiredDto> findAll(String email) throws Exception {
@@ -84,6 +89,7 @@ public class DocumentRequiredService {
 
     public DocumentRequired deleteDocumentRequiredById(int id, String email) throws Exception {
         Optional<DocumentRequired> documentInDB = documentRequiredRepository.findById(id);
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
 
         if(documentInDB.isEmpty()) throw new Exception("Unable to find document with id: " + id);
 
@@ -92,6 +98,8 @@ public class DocumentRequiredService {
         return documentRequiredRepository.save(documentInDB.get());
     }
     public List<DocumentRequiredDto> getDocumentsRequiredForTestDrive(int id, String email) throws Exception {
+        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+
         List<DocumentRequired> documentRequiredList = documentRequiredRepository.findAll();
         List<DocumentRequiredDto> results = new ArrayList<>();
         for(DocumentRequired d: documentRequiredList) {
