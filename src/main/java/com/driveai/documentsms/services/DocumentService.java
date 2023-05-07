@@ -45,9 +45,9 @@ public class DocumentService {
     }
 
     public Document findDocumentById(int id, String email) throws Exception {
-        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+        UserDealershipDto userDto = userClient.findUserByEmail(email);
 
-        int userId = userDealershipDto.getId();
+        int userId = userDto.getId();
         String title = "Document Found";
         String description = "The user with id "+userId+" found document with id "+id;
         String method = "GET";
@@ -59,10 +59,11 @@ public class DocumentService {
     }
 
     public Document saveDocument(CreateDocumentDto document, String email) throws Exception { //DocumentUploadDto
-        DocumentRequired documentRequired = documentRequiredService.findDocumentRequiredById(document.getDocumentRequiredId(), email);
-        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
 
-        int userId = userDealershipDto.getId();
+        DocumentRequired documentRequired = documentRequiredService.findDocumentRequiredById(document.getDocumentRequiredId(), email);
+        UserDealershipDto userDto = userClient.findUserByEmail(email);
+
+        int userId = userDto.getId();
         String title = "Document Created";
         String description = "The user with id "+userId+" created document";
         String method = "POST";
@@ -71,12 +72,12 @@ public class DocumentService {
         if(documentRequired == null) throw new Exception("Document required not found with id: " + document.getDocumentRequiredId());
 
         /*
-        if(userDealershipDto.getUser_type().equals("AUTOMOTIVE_GROUP_ADMIN")) {
+        if(userDto.getUser_type().equals("AUTOMOTIVE_GROUP_ADMIN")) {
             documentRequired.setExternalTable("automotive_group");
-            //documentRequired.setExternalId(userDealershipDto.getDealershipId());
+            //documentRequired.setExternalId(userDto.getDealershipId());
         } else {
             documentRequired.setExternalTable("user");
-            documentRequired.setExternalId(userDealershipDto.getId());
+            documentRequired.setExternalId(userDto.getId());
         }*/
 
         Document newDoc = new Document();
@@ -90,10 +91,11 @@ public class DocumentService {
     }
 
     public Document updateDocumentById(int id, UpdateDocumentDto document, String email) throws Exception {
-        Optional<Document> documentInDB = documentRepository.findById(id);
-        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
 
-        int userId = userDealershipDto.getId();
+        Optional<Document> documentInDB = documentRepository.findById(id);
+        UserDealershipDto userDto = userClient.findUserByEmail(email);
+
+        int userId = userDto.getId();
         String title = "Document Updated";
         String description = "The user with id "+userId+" updated document with id "+id;
         String method = "PUT";
@@ -117,9 +119,9 @@ public class DocumentService {
     }
 
     public List<DocumentDto> findAll(String email) throws Exception {
-        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+        UserDealershipDto userDto = userClient.findUserByEmail(email);
 
-        int userId = userDealershipDto.getId();
+        int userId = userDto.getId();
         String title = "Document Found All";
         String description = "The user with id "+userId+" found all documents";
         String method = "GET";
@@ -139,9 +141,9 @@ public class DocumentService {
 
     public Document deleteDocumentById(int id, String email) throws Exception {
         Optional<Document> documentInDB = documentRepository.findById(id);
-        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+        UserDealershipDto userDto = userClient.findUserByEmail(email);
 
-        int userId = userDealershipDto.getId();
+        int userId = userDto.getId();
         String title = "Document Deleted";
         String description = "The user with id "+userId+" deleted document with id "+id;
         String method = "DELETE";
@@ -158,9 +160,9 @@ public class DocumentService {
     }
 
     public List<DocumentDto> getDocumentsForUser(int id, String email) throws Exception {
-        UserDealershipDto userDealershipDto = userClient.findUserByEmail(email);
+        UserDealershipDto userDto = userClient.findUserByEmail(email);
 
-        int userId = userDealershipDto.getId();
+        int userId = userDto.getId();
         String title = "Document Found All For User";
         String description = "The user with id "+userId+" found all documents for user with id "+id;
         String method = "GET";
