@@ -36,18 +36,18 @@ public class DocumentService {
         return awsS3Service.generatePreSignedUrl(fileName, "drive-ai-ccm", HttpMethod.PUT);
     }
 
-    public Document findDocumentById(int documentId) throws Exception {
+    public Document findDocumentById(int documentId, String email) throws Exception {
         return documentRepository.findById(documentId).orElseThrow(() -> new Exception("Document not found with id: " + documentId));
     }
 
-    public Document saveDocument(Document document) throws Exception { //DocumentUploadDto
+    public Document saveDocument(Document document, String email) throws Exception { //DocumentUploadDto
         if(document.getDocumentId() != 0) throw new Exception("Cannot pass the primary id as a parameter");
 
         document.setCreatedAt(Timestamp.from(Instant.now()));
         return documentRepository.save(document);
     }
 
-    public Document updateDocumentById(int id, Document document) throws Exception {
+    public Document updateDocumentById(int id, Document document, String email) throws Exception {
         Optional<Document> documentInDB = documentRepository.findById(id);
 
         if (documentInDB.isEmpty())  throw new Exception("Unable to find document with id: " + id);
@@ -66,7 +66,7 @@ public class DocumentService {
         return documentRepository.callValidateDocumentsStoredProcedure(externalId, externalTable);
     }
 
-    public List<DocumentDto> findAll() {
+    public List<DocumentDto> findAll(String email) throws Exception {
         List<Document> documentList = documentRepository.findAll();
         List<DocumentDto> results = new ArrayList<>();
         for(Document d: documentList) {
@@ -76,7 +76,7 @@ public class DocumentService {
         return results;
     }
 
-    public Document deleteDocumentById(int id) throws Exception {
+    public Document deleteDocumentById(int id, String email) throws Exception {
         Optional<Document> documentInDB = documentRepository.findById(id);
 
         if(documentInDB.isEmpty()) throw new Exception("Unable to find document with id: " + id);
@@ -87,7 +87,7 @@ public class DocumentService {
         return documentRepository.save(documentInDB.get());
     }
 
-    public List<DocumentDto> getDocumentsForUser(int id) {
+    public List<DocumentDto> getDocumentsForUser(int id, String email) throws Exception {
         List<Document> documentList = documentRepository.findAll();
         List<DocumentDto> results = new ArrayList<>();
         for(Document d: documentList) {

@@ -12,15 +12,15 @@ public class Log {
     @Column(name = "log_id", nullable = false, updatable = false)
     @JsonView(Views.Get.class)
     private int logId;
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false, updatable = false)
     private int userId;
-    @Column(name = "title", nullable = false)
+    @Column(name = "title", nullable = false, updatable = false)
     private String title;
-    @Column(name = "description", nullable = false)
+    @Column(name = "description", nullable = false, updatable = false)
     private String description;
-    @Column(name = "procedure_action", nullable = false)
+    @Column(name = "procedure_action", nullable = false, updatable = false)
     private  String procedureAction;
-    @Column(name = "status_code", nullable = false)
+    @Column(name = "status_code", nullable = false, updatable = false)
     private int statusCode;
     @Column(name = "created_at", updatable = false)
     @JsonView(Views.Get.class)

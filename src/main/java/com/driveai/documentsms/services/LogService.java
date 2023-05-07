@@ -15,18 +15,18 @@ import java.util.List;
 public class LogService {
     @Autowired
     LogRepository logRepository;
-    public Log findById(int id) throws Exception {
+    public Log findById(int id, String email) throws Exception {
         return logRepository.findById(id).orElseThrow(()
                 -> new Exception("Log not found with id: " + id));
     }
 
-    public Log saveLog(Log log) throws Exception {
+    public void saveLog(Log log) throws Exception {
         if (log.getLogId() != 0) throw new Exception("Cannot pass the primary id as a parameter");
         log.setCreatedAt(Timestamp.from(Instant.now()));
-        return logRepository.save(log);
+        logRepository.save(log);
     }
 
-    public List<LogDto> findAll() {
+    public List<LogDto> findAll(String email) {
         List<Log> logList = logRepository.findAll();
         List<LogDto> results = new ArrayList<>();
         for(Log l: logList) {

@@ -1,20 +1,18 @@
 package com.driveai.documentsms.models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 
 @Entity
 public class DocumentRequired {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "document_required_id", nullable = false, updatable = false)
+    @Column(name = "document_required_id", updatable = false)
     @JsonView(Views.Get.class)
     private int documentRequiredId;
-    @Column(name = "external_id", nullable = false)
+    @Column(name = "external_id", updatable = false)
     private int externalId;
     @Column(name = "external_table", nullable = false)
     private String externalTable;

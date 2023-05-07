@@ -5,17 +5,16 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 
 @Entity
 public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "document_id", nullable = false, updatable = false)
+    @Column(name = "document_id", updatable = false)
     @JsonView(Views.Get.class)
     private int documentId;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "document_required_id", referencedColumnName = "document_required_id")
+    @JoinColumn(name = "document_required_id", referencedColumnName = "document_required_id", nullable = false)
     @JsonView(Views.Get.class)
     private DocumentRequired documentRequiredId;
     @Column(name = "external_id", nullable = false)
