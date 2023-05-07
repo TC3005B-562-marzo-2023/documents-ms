@@ -1,4 +1,4 @@
 package com.driveai.documentsms.client;
 
-public interface Client {
+public interface UserClient {
 }

@@ -13,6 +13,9 @@ public class LogDto {
     private int statusCode;
     private Timestamp createdAt;
 
+    /**
+     * SETTERS
+     */
     public void setLogId(int logId) {
         this.logId = logId;
     }
@@ -33,14 +36,15 @@ public class LogDto {
         this.procedureAction = procedureAction;
     }
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
+    public void setStatusCode(int statusCode) { this.statusCode = statusCode; }
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
+    /**
+     * GETTERS
+     */
     public int getLogId() {
         return logId;
     }

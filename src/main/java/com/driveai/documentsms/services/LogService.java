@@ -6,6 +6,8 @@ import com.driveai.documentsms.repositories.LogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,12 @@ public class LogService {
     public Log findById(int id) throws Exception {
         return logRepository.findById(id).orElseThrow(()
                 -> new Exception("Log not found with id: " + id));
+    }
+
+    public Log saveLog(Log log) throws Exception {
+        if (log.getLogId() != 0) throw new Exception("Cannot pass the primary id as a parameter");
+        log.setCreatedAt(Timestamp.from(Instant.now()));
+        return logRepository.save(log);
     }
 
     public List<LogDto> findAll() {
