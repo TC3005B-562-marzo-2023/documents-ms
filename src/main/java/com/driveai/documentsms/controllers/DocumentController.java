@@ -1,9 +1,11 @@
 package com.driveai.documentsms.controllers;
 
+import com.amazonaws.HttpMethod;
 import com.driveai.documentsms.dto.DocumentDto;
 import com.driveai.documentsms.dto.CreateDocumentDto;
 import com.driveai.documentsms.dto.UpdateDocumentDto;
 import com.driveai.documentsms.models.Document;
+import com.driveai.documentsms.services.AwsS3Service;
 import com.driveai.documentsms.services.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,12 +17,19 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+@CrossOrigin(origins = "*")
 
 @RestController
 @RequestMapping("/v1/document")
 public class DocumentController {
     @Autowired
     DocumentService documentService;
+    private final AwsS3Service awsS3Service;
+
+    public DocumentController(AwsS3Service awsS3Service) {
+        this.awsS3Service = awsS3Service;
+    }
+
     @GetMapping("/list")
     public ResponseEntity<List<DocumentDto>> getAllDocuments(Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
@@ -82,5 +91,10 @@ public class DocumentController {
         Jwt principalJwt = (Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
         return new ResponseEntity<>(documentService.getDocumentsForUser(id, email), HttpStatus.OK);
+    }
+    @GetMapping("/generate-upload-url")
+    public ResponseEntity<String> generateUploadUrl() {
+        return ResponseEntity.ok(
+                awsS3Service.generatePreSignedUrl(UUID.randomUUID()+".png", "drive-ai-ccm", HttpMethod.PUT));
     }
 }

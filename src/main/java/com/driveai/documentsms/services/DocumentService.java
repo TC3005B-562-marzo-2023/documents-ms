@@ -151,6 +151,11 @@ public class DocumentService {
 
         if(documentInDB.isEmpty()) throw new Exception("Unable to find document with id: " + id);
 
+        // Luis - Borrar el documento en s3
+
+
+        // Aqui termina
+
         documentInDB.get().setDeleted(true);
         documentInDB.get().setDeletedAt(Timestamp.from(Instant.now()));
 
