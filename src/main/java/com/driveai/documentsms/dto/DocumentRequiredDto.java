@@ -16,94 +16,55 @@ public class DocumentRequiredDto {
     private Timestamp updatedAt;
     private boolean isDeleted;
     private Timestamp deletedAt;
+    /**
+     * SETTERS
+     */
+    public void setDocumentRequiredId(int documentRequiredId) { this.documentRequiredId = documentRequiredId; }
 
-    public void setDocumentRequiredId(int documentRequiredId) {
-        this.documentRequiredId = documentRequiredId;
-    }
+    public void setExternalId(int externalId) { this.externalId = externalId; }
 
-    public void setExternalId(int externalId) {
-        this.externalId = externalId;
-    }
+    public void setExternalTable(String externalTable) { this.externalTable = externalTable; }
 
-    public void setExternalTable(String externalTable) {
-        this.externalTable = externalTable;
-    }
+    public void setDocumentName(String documentName) { this.documentName = documentName; }
 
-    public void setDocumentName(String documentName) {
-        this.documentName = documentName;
-    }
+    public void setDocumentNote(String documentNote) { this.documentNote = documentNote; }
 
-    public void setDocumentNote(String documentNote) {
-        this.documentNote = documentNote;
-    }
+    public void setDocumentFormat(String documentFormat) { this.documentFormat = documentFormat; }
 
-    public void setDocumentFormat(String documentFormat) {
-        this.documentFormat = documentFormat;
-    }
+    public void setProcessType(String processType) { this.processType = processType; }
 
-    public void setProcessType(String processType) {
-        this.processType = processType;
-    }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+    public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+    public void setDeleted(boolean deleted) { isDeleted = deleted; }
 
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
+    public void setDeletedAt(Timestamp deletedAt) { this.deletedAt = deletedAt; }
 
-    public void setDeletedAt(Timestamp deletedAt) {
-        this.deletedAt = deletedAt;
-    }
+    /**
+     * GETTERS
+     */
+    public int getDocumentRequiredId() { return documentRequiredId; }
 
-    public int getDocumentRequiredId() {
-        return documentRequiredId;
-    }
+    public int getExternalId() { return externalId; }
 
-    public int getExternalId() {
-        return externalId;
-    }
+    public String getExternalTable() { return externalTable; }
 
-    public String getExternalTable() {
-        return externalTable;
-    }
+    public String getDocumentName() { return documentName; }
 
-    public String getDocumentName() {
-        return documentName;
-    }
+    public String getDocumentNote() { return documentNote; }
 
-    public String getDocumentNote() {
-        return documentNote;
-    }
+    public String getDocumentFormat() { return documentFormat; }
 
-    public String getDocumentFormat() {
-        return documentFormat;
-    }
+    public String getProcessType() { return processType; }
 
-    public String getProcessType() {
-        return processType;
-    }
+    public Timestamp getCreatedAt() { return createdAt; }
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
+    public Timestamp getUpdatedAt() { return updatedAt; }
 
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
+    public boolean isDeleted() { return isDeleted; }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public Timestamp getDeletedAt() {
-        return deletedAt;
-    }
+    public Timestamp getDeletedAt() { return deletedAt; }
 
     public DocumentRequiredDto(DocumentRequired documentRequired) {
         this.documentRequiredId = documentRequired.getDocumentRequiredId();
@@ -118,5 +79,4 @@ public class DocumentRequiredDto {
         this.isDeleted = documentRequired.isDeleted();
         this.deletedAt = documentRequired.getDeletedAt();
     }
-
 }

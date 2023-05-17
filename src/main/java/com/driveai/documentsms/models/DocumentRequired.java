@@ -1,5 +1,6 @@
 package com.driveai.documentsms.models;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
@@ -8,9 +9,10 @@ import java.sql.Timestamp;
 public class DocumentRequired {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "document_required_id", nullable = false)
+    @Column(name = "document_required_id", updatable = false)
+    @JsonView(Views.Get.class)
     private int documentRequiredId;
-    @Column(name = "external_id", nullable = false)
+    @Column(name = "external_id", updatable = false)
     private int externalId;
     @Column(name = "external_table", nullable = false)
     private String externalTable;
@@ -22,18 +24,20 @@ public class DocumentRequired {
     private String documentFormat;
     @Column(name = "process_type", nullable = false)
     private String processType;
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", updatable = false)
+    @JsonView(Views.Get.class)
     private Timestamp createdAt;
     @Column(name = "updated_at")
-    private  Timestamp updatedAt;
-    @Column(name = "is_deleted", nullable = false)
+    @JsonView(Views.Get.class)
+    private Timestamp updatedAt;
+    @Column(name = "is_deleted")
+    @JsonView(Views.Get.class)
     private boolean isDeleted;
     @Column(name = "deleted_at")
+    @JsonView(Views.Get.class)
     private Timestamp deletedAt;
 
-    public void setDocumentRequiredId(int documentRequiredId) {
-        this.documentRequiredId = documentRequiredId;
-    }
+    public void setDocumentRequiredId(int documentRequiredId) {this.documentRequiredId = documentRequiredId; }
 
     public void setExternalId(int externalId) {
         this.externalId = externalId;
@@ -59,17 +63,13 @@ public class DocumentRequired {
         this.processType = processType;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
+    public void setCreatedAt(Timestamp createdAt) { this.createdAt = createdAt; }
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
+    public void setDeleted(boolean deleted) {isDeleted = deleted; }
 
     public void setDeletedAt(Timestamp deletedAt) {
         this.deletedAt = deletedAt;
@@ -103,9 +103,7 @@ public class DocumentRequired {
         return processType;
     }
 
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
+    public Timestamp getCreatedAt() { return createdAt; }
 
     public Timestamp getUpdatedAt() {
         return updatedAt;

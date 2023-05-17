@@ -17,13 +17,14 @@ public class DocumentDto {
     private boolean isDeleted;
     private Timestamp deletedAt;
 
+    /**
+     * SETTERS
+     */
     public void setDocumentId(int documentId) {
         this.documentId = documentId;
     }
 
-    public void setDocumentRequiredId(DocumentRequired documentRequiredId) {
-        this.documentRequiredId = documentRequiredId;
-    }
+    public void setDocumentRequiredId(DocumentRequired documentRequiredId) { this.documentRequiredId = documentRequiredId; }
 
     public void setExternalId(int externalId) {
         this.externalId = externalId;
@@ -53,21 +54,20 @@ public class DocumentDto {
         this.updatedAt = updatedAt;
     }
 
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
+    public void setDeleted(boolean deleted) { isDeleted = deleted; }
 
     public void setDeletedAt(Timestamp deletedAt) {
         this.deletedAt = deletedAt;
     }
 
+    /**
+     * GETTERS
+     */
     public int getDocumentId() {
         return documentId;
     }
 
-    public DocumentRequired getDocumentRequiredId() {
-        return documentRequiredId;
-    }
+    public DocumentRequired getDocumentRequiredId() { return documentRequiredId; }
 
     public int getExternalId() {
         return externalId;
@@ -85,9 +85,7 @@ public class DocumentDto {
         return status;
     }
 
-    public boolean isOcrChecked() {
-        return ocrChecked;
-    }
+    public boolean isOcrChecked() { return ocrChecked; }
 
     public Timestamp getCreatedAt() {
         return createdAt;
