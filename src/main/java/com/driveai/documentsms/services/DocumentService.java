@@ -1,7 +1,13 @@
 package com.driveai.documentsms.services;
 
+import ch.qos.logback.core.Context;
+import com.amazonaws.AmazonClientException;
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.model.Bucket;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.driveai.documentsms.client.UserClient;
+import com.driveai.documentsms.config.AwsS3Config;
 import com.driveai.documentsms.dto.CreateDocumentDto;
 import com.driveai.documentsms.dto.DocumentDto;
 import com.driveai.documentsms.dto.UpdateDocumentDto;
@@ -13,7 +19,9 @@ import com.driveai.documentsms.repositories.DocumentRepository;
 import com.driveai.documentsms.repositories.DocumentRequiredRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -33,6 +41,8 @@ public class DocumentService {
     UserClient userClient;
     @Autowired
     LogService logService;
+    @Autowired
+    AwsS3Config awsS3Client;
 
     private AwsS3Service awsS3Service;
     @Autowired
@@ -189,4 +199,20 @@ public class DocumentService {
 
         return results;
     }
+
+    /*
+    public String uploadFile(String keyName, MultipartFile file) throws IOException {
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(file.getSize());
+            //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
+        List<Bucket> buckets = awsS3Client.listBuckets();
+        for(Bucket bucket : buckets) {
+            System.out.println(bucket.getName());
+        }
+
+        return "File not uploaded: " + keyName;
+    }
+     */
+
 }

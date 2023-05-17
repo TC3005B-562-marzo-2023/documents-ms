@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -97,4 +99,13 @@ public class DocumentController {
         return ResponseEntity.ok(
                 awsS3Service.generatePreSignedUrl(UUID.randomUUID()+".png", "drive-ai-ccm", HttpMethod.PUT));
     }
+
+    /*
+    @PostMapping("/file/upload")
+    public ResponseEntity<String> uploadFile(@RequestParam("fileName") String fileName,
+                                             @RequestParam("file") MultipartFile file) {
+        return new ResponseEntity<>(documentService.uploadFile(fileName, file), HttpStatus.OK);
+    }
+
+     */
 }
