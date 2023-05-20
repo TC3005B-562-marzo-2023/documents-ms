@@ -100,12 +100,9 @@ public class DocumentController {
                 awsS3Service.generatePreSignedUrl(UUID.randomUUID()+".png", "drive-ai-ccm", HttpMethod.PUT));
     }
 
-    /*
     @PostMapping("/file/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("fileName") String fileName,
                                              @RequestParam("file") MultipartFile file) {
         return new ResponseEntity<>(documentService.uploadFile(fileName, file), HttpStatus.OK);
     }
-
-     */
 }

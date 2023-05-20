@@ -200,19 +200,21 @@ public class DocumentService {
         return results;
     }
 
-    /*
-    public String uploadFile(String keyName, MultipartFile file) throws IOException {
-
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.getSize());
-            //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
-        List<Bucket> buckets = awsS3Client.listBuckets();
-        for(Bucket bucket : buckets) {
-            System.out.println(bucket.getName());
-        }
-
-        return "File not uploaded: " + keyName;
+    // Version de LUIS y Carla para probar front
+    public String uploadFile(String keyName, MultipartFile file) {
+       return awsS3Service.uploadFile(keyName, file);
     }
-     */
+
+//    public String uploadFile(String keyName, MultipartFile file) throws IOException {
+//            ObjectMetadata metadata = new ObjectMetadata();
+//            metadata.setContentLength(file.getSize());
+//            //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
+//        List<Bucket> buckets = awsS3Client.listBuckets();
+//        for(Bucket bucket : buckets) {
+//            System.out.println(bucket.getName());
+//        }
+//
+//        return "File not uploaded: " + keyName;
+//    }
 
 }
