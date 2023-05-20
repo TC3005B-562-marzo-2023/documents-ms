@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 @CrossOrigin(origins = "*")
 
@@ -87,6 +88,7 @@ public class DocumentController {
         message.put("uploadURL", uploadURL);
         return new ResponseEntity<>(documentService.createUploadURL(fileName), HttpStatus.OK);
     }
+
     @GetMapping("/get-documents-for-user/{id}")
     public ResponseEntity<List<DocumentDto>> getDocumentsForUser(@PathVariable int id, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
@@ -94,10 +96,26 @@ public class DocumentController {
         String email = principalJwt.getClaim("email");
         return new ResponseEntity<>(documentService.getDocumentsForUser(id, email), HttpStatus.OK);
     }
+
     @GetMapping("/generate-upload-url")
     public ResponseEntity<String> generateUploadUrl() {
         return ResponseEntity.ok(
                 awsS3Service.generatePreSignedUrl(UUID.randomUUID()+".png", "drive-ai-ccm", HttpMethod.PUT));
+    }
+
+    @GetMapping("/get-documents-from/{externalTable}/{externalId}")
+    public ResponseEntity<?> getDocumentsFrom(@PathVariable String externalTable, @PathVariable int externalId, Principal principal) throws Exception {
+        JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
+        Jwt principalJwt = (Jwt) token.getPrincipal();
+        String email = principalJwt.getClaim("email");
+        try {
+            List<DocumentDto> documentsFrom = documentService.getDocumentsFrom(externalTable, externalId, email);
+            return new ResponseEntity<>(documentsFrom, HttpStatus.OK);
+        } catch (Exception e) {
+            Map<String,String> response= new HashMap<>();
+            response.put("message",e.getMessage());
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
     }
 
     /*

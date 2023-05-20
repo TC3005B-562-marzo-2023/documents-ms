@@ -1,11 +1,6 @@
 package com.driveai.documentsms.services;
 
-import ch.qos.logback.core.Context;
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.model.Bucket;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.driveai.documentsms.client.UserClient;
 import com.driveai.documentsms.config.AwsS3Config;
 import com.driveai.documentsms.dto.CreateDocumentDto;
@@ -21,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -200,19 +194,39 @@ public class DocumentService {
         return results;
     }
 
+    public List<DocumentDto> getDocumentsFrom(String externalTable, int externalId, String email) throws Exception {
+//        int userId = userClient.findUserByEmail(email).getId();
+
+        List<DocumentDto> documentList = documentRepository.findAllDtoByExternalIdAndExternalTable(externalId, externalTable);
+        if (documentList.isEmpty()) {
+            throw new Exception("No documents found with type: " + externalTable + " and with id: " + externalId);
+        }
+
+//        String title = "Documents from" + externalTable + "with id: " + externalId;
+//        String description = "The user with id "+userId+" requested documents from" + externalTable + "with id: " + externalId;
+//        String method = "GET";
+//        int status = 200;
+//        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
+        return documentList;
+    }
+
+    // Version de LUIS y Carla para probar front
+//    public String uploadFile(String keyName, MultipartFile file) {
+//       return awsS3Service.uploadFile(keyName, file);
+//    }
+
     /*
     public String uploadFile(String keyName, MultipartFile file) throws IOException {
-
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.getSize());
-            //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(file.getSize());
+        //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
         List<Bucket> buckets = awsS3Client.listBuckets();
         for(Bucket bucket : buckets) {
             System.out.println(bucket.getName());
         }
-
         return "File not uploaded: " + keyName;
     }
-     */
+    */
 
 }
