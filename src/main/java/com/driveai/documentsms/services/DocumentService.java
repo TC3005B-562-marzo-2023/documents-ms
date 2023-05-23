@@ -70,8 +70,8 @@ public class DocumentService {
 
     public Document saveDocument(CreateDocumentDto document, String email) throws Exception { //DocumentUploadDto
 
-        DocumentRequired documentRequired = documentRequiredService.findDocumentRequiredById(document.getDocumentRequiredId(), email);
         UserDealershipDto userDto = userClient.findUserByEmail(email);
+        DocumentRequired documentRequired = documentRequiredService.findDocumentRequiredById(document.getDocumentRequiredId(), email);
 
         int userId = userDto.getId();
         String title = "Document Created";
@@ -91,6 +91,8 @@ public class DocumentService {
         }*/
 
         Document newDoc = new Document();
+        newDoc.setExternalId(document.getExternalId());
+        newDoc.setExternalTable(document.getExternalTable());
         newDoc.setDocumentRequiredId(documentRequired);
         newDoc.setStorageUrl(document.getStorageUrl());
         newDoc.setCreatedAt(Timestamp.from(Instant.now()));
