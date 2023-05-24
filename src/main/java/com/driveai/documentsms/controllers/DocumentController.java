@@ -24,12 +24,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/v1/document")
 public class DocumentController {
-    @Autowired
+    final
     DocumentService documentService;
     private final AwsS3Service awsS3Service;
-
-    public DocumentController(AwsS3Service awsS3Service) {
+    public DocumentController(AwsS3Service awsS3Service, DocumentService documentService) {
         this.awsS3Service = awsS3Service;
+        this.documentService = documentService;
     }
 
     @GetMapping("/list")
@@ -38,6 +38,13 @@ public class DocumentController {
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
         return new ResponseEntity<>(documentService.findAll(email),HttpStatus.OK);
+    }
+    @GetMapping("/get-documents-for-automotive-group/{id}")
+    public ResponseEntity<List<DocumentDto>> getDocumentsForAutomotiveGroup(@PathVariable("id") int id, Principal principal) throws Exception {
+        JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
+        Jwt principalJwt=(Jwt) token.getPrincipal();
+        String email = principalJwt.getClaim("email");
+        return new ResponseEntity<>(documentService.getDocumentsForAutomotiveGroup(id, email),HttpStatus.OK);
     }
     @PostMapping("/create") // DocumentUploadDto
     public ResponseEntity<Document> createDocument(@RequestBody CreateDocumentDto document, Principal principal) throws Exception {
@@ -108,4 +115,5 @@ public class DocumentController {
     }
 
      */
+
 }

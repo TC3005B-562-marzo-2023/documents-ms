@@ -151,6 +151,32 @@ public class DocumentService {
         return results;
     }
 
+    public List<DocumentDto> getDocumentsForAutomotiveGroup(int id, String email) throws Exception {
+        UserDealershipDto userDto = userClient.findUserByEmail(email);
+
+        int userId = userDto.getId();
+        String title = "Document Found All For User";
+        String description = "The user with id "+userId+" found all documents for user with id "+id;
+        String method = "GET";
+        int status = 200;
+
+        List<Document> documentList = documentRepository.findAll();
+        List<DocumentDto> results = new ArrayList<>();
+        for(Document d: documentList) {
+            if(Objects.equals(d.getExternalId(), id)
+                    && !d.isDeleted()
+                    && Objects.equals(d.getExternalTable(), "automotive_group")
+            ) {
+                DocumentDto dto = new DocumentDto(d);
+                results.add(dto);
+            }
+        }
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
+        return results;
+    }
+
     public Document deleteDocumentById(int id, String email) throws Exception {
         Optional<Document> documentInDB = documentRepository.findById(id);
         UserDealershipDto userDto = userClient.findUserByEmail(email);
