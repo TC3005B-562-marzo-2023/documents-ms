@@ -195,18 +195,17 @@ public class DocumentService {
     }
 
     public List<DocumentDto> getDocumentsFrom(String externalTable, int externalId, String email) throws Exception {
-//        int userId = userClient.findUserByEmail(email).getId();
-
         List<DocumentDto> documentList = documentRepository.findAllDtoByExternalIdAndExternalTable(externalId, externalTable);
         if (documentList.isEmpty()) {
             throw new Exception("No documents found with type: " + externalTable + " and with id: " + externalId);
         }
 
-//        String title = "Documents from" + externalTable + "with id: " + externalId;
-//        String description = "The user with id "+userId+" requested documents from" + externalTable + "with id: " + externalId;
-//        String method = "GET";
-//        int status = 200;
-//        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+        int userId = userClient.findUserByEmail(email).getId();
+        String title = "Get Documents from";
+        String description = "The user "+userId+" requested documents from"+externalTable+" -> "+externalId;
+        String method = "GET";
+        int status = 200;
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
 
         return documentList;
     }

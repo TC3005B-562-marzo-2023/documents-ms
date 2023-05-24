@@ -7,6 +7,9 @@ import com.driveai.documentsms.dto.UpdateDocumentDto;
 import com.driveai.documentsms.models.Document;
 import com.driveai.documentsms.services.AwsS3Service;
 import com.driveai.documentsms.services.DocumentService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -103,8 +106,9 @@ public class DocumentController {
                 awsS3Service.generatePreSignedUrl(UUID.randomUUID()+".png", "drive-ai-ccm", HttpMethod.PUT));
     }
 
+    @ApiResponse(responseCode = "200", description = "Get all documents from specific table and id", content = { @Content(mediaType = "application/json", schema = @Schema(implementation = DocumentDto.class))})
     @GetMapping("/get-documents-from/{externalTable}/{externalId}")
-    public ResponseEntity<?> getDocumentsFrom(@PathVariable String externalTable, @PathVariable int externalId, Principal principal) throws Exception {
+    public ResponseEntity<?> getDocumentsFrom(@PathVariable String externalTable, @PathVariable int externalId, Principal principal) {
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
         Jwt principalJwt = (Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
@@ -114,7 +118,7 @@ public class DocumentController {
         } catch (Exception e) {
             Map<String,String> response= new HashMap<>();
             response.put("message",e.getMessage());
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
     }
 
