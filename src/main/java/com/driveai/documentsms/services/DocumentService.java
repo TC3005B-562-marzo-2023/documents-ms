@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -50,9 +51,10 @@ public class DocumentService {
         this.awsS3Service = awsS3Service;
     }
 
+    /*
     public String createUploadURL(String fileName) {
         return awsS3Service.generatePreSignedUrl(fileName, "drive-ai-ccm", HttpMethod.PUT);
-    }
+    }*/
 
     public Document findDocumentById(int id, String email) throws Exception {
         UserDealershipDto userDto = userClient.findUserByEmail(email);
@@ -228,19 +230,14 @@ public class DocumentService {
         return results;
     }
 
-    /*
-    public String uploadFile(String keyName, MultipartFile file) throws IOException {
+    public String uploadFile(String keyName, File file) throws IOException {
 
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.getSize());
+        ObjectMetadata metadata = new ObjectMetadata();
+        //metadata.setContentLength(file.getSize());
             //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
-        List<Bucket> buckets = awsS3Client.listBuckets();
-        for(Bucket bucket : buckets) {
-            System.out.println(bucket.getName());
-        }
 
         return "File not uploaded: " + keyName;
     }
-     */
+
 
 }
