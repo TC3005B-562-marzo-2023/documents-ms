@@ -5,6 +5,7 @@ import com.driveai.documentsms.models.S3Asset;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 public interface S3Repository {
@@ -14,4 +15,5 @@ public interface S3Repository {
     byte[] downloadFile(String bucketName, String fileName) throws IOException;
     void moveObject(String bucketName, String fileKey, String destinationFileKey);
     void deleteObject(String bucketName, String fileKey);
+    URL getObjectURL(String bucketName, String fileName) throws IOException;
 }

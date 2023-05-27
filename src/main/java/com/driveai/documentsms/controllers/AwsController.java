@@ -2,6 +2,7 @@ package com.driveai.documentsms.controllers;
 
 import com.driveai.documentsms.models.S3Asset;
 import com.driveai.documentsms.services.AwsS3Service;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/v1/s3")
@@ -23,7 +26,7 @@ public class AwsController {
 
     private final AwsS3Service awsService;
 
-    public AwsController(AwsS3Service awsService) {
+    public AwsController(@Qualifier("awsServiceImpl") AwsS3Service awsService) {
         this.awsService = awsService;
     }
 
@@ -77,5 +80,28 @@ public class AwsController {
         return new ResponseEntity<>(awsService.uploadFile(bucketName, filePath, file), HttpStatus.OK);
     }
 
+    @PostMapping("/batch-upload")
+    public ResponseEntity<?> batchUpload(@RequestParam Map<String, MultipartFile> formData, @RequestParam(value = "bucketName") String bucketName, @RequestParam(value = "filePath", required = false) String filePath) {
+        try {
+            List<URL> storageUrls = new ArrayList<>();
+            String defaultFilePath = "";
+            if (filePath != null) {
+                defaultFilePath = filePath;
+            }
 
+            for (Map.Entry<String, MultipartFile> entry : formData.entrySet()) {
+                MultipartFile file = entry.getValue();
+
+                if (!file.isEmpty()) {
+                    String s3FileName = awsService.uploadFile(bucketName, defaultFilePath, file);
+                    URL imgUrl = awsService.getS3ObjectURL(bucketName, s3FileName);
+                    storageUrls.add(imgUrl);
+                }
+            }
+
+            return new ResponseEntity<>(storageUrls, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
