@@ -49,14 +49,17 @@ public class DocumentRequiredService {
         String method = "POST";
         int status = 201;
 
+        /*
         if(userDto.getUser_type().equals("MANAGER")) {
             newDocumentRequired.setExternalTable("dealership");
             //documentRequired.setExternalId(userDto.getDealershipId());
         } else {
             newDocumentRequired.setExternalTable("user");
             newDocumentRequired.setExternalId(userDto.getId());
-        }
+        }*/
 
+        newDocumentRequired.setExternalId(documentRequired.getExternalId());
+        newDocumentRequired.setExternalTable(documentRequired.getExternalTable());
         newDocumentRequired.setCreatedAt(Timestamp.from(Instant.now()));
         newDocumentRequired.setDocumentName(documentRequired.getDocumentName());
         newDocumentRequired.setDocumentNote(documentRequired.getDocumentNote());
