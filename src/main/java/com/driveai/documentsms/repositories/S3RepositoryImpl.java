@@ -1,11 +1,7 @@
 package com.driveai.documentsms.repositories;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.CopyObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 
 import com.driveai.documentsms.models.S3Asset;
@@ -16,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,10 +90,17 @@ public class S3RepositoryImpl implements S3Repository {
     }
 
     public String uploadFile(String bucketName, String fileName, File fileObj) {
-        s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+        if (bucketName.equals("public-drive-ai")) {
+            s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj).withCannedAcl(CannedAccessControlList.PublicRead));
+        } else {
+            s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
+        }
         fileObj.delete();
-        return "File uploaded : " + fileName;
+        return fileName;
     }
 
-
+    @Override
+    public URL getObjectURL(String bucketName, String fileName) {
+        return mapS3ToObject(bucketName, fileName).getUrl();
+    }
 }

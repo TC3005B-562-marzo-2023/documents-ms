@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.List;
 
 @Service
@@ -37,6 +38,10 @@ public class AwsServiceImpl implements AwsS3Service {
 
     public String getS3FileContent(String bucketName, String fileName) throws IOException {
         return getAsString(s3Repository.getObject(bucketName, fileName));
+    }
+
+    public URL getS3ObjectURL(String bucketName, String fileName) throws IOException {
+        return s3Repository.getObjectURL(bucketName, fileName);
     }
 
     private static String getAsString(InputStream is) throws IOException {
@@ -87,5 +92,4 @@ public class AwsServiceImpl implements AwsS3Service {
         }
         return convertedFile;
     }
-
 }
