@@ -15,5 +15,5 @@ public interface S3Repository {
     byte[] downloadFile(String bucketName, String fileName) throws IOException;
     void moveObject(String bucketName, String fileKey, String destinationFileKey);
     void deleteObject(String bucketName, String fileKey);
-    URL getObjectURL(String bucketName, String fileName) throws IOException;
+    S3Asset getObjectAsset(String bucketName, String fileName);
 }

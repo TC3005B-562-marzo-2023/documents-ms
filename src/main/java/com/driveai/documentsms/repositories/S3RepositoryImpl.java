@@ -44,7 +44,6 @@ public class S3RepositoryImpl implements S3Repository {
     }
 
     private S3Asset mapS3ToObject(String bucket, String key) {
-
         return S3Asset.builder()
                 .name(s3Client.getObjectMetadata(bucket, key).getUserMetaDataOf("name"))
                 .key(key)
@@ -100,7 +99,7 @@ public class S3RepositoryImpl implements S3Repository {
     }
 
     @Override
-    public URL getObjectURL(String bucketName, String fileName) {
-        return mapS3ToObject(bucketName, fileName).getUrl();
+    public S3Asset getObjectAsset(String bucketName, String fileName) {
+        return mapS3ToObject(bucketName, fileName);
     }
 }

@@ -16,5 +16,5 @@ public interface AwsS3Service {
     byte[] downloadFile(String bucketName, String fileName) throws IOException;
     void moveObject(String bucketName, String fileKey, String destinationFileKey);
     void deleteObject (String bucketName, String fileKey);
-    URL getS3ObjectURL(String bucketName, String fileKey) throws IOException;
+    S3Asset getS3ObjectAsset(String bucketName, String fileKey) throws IOException;
 }

@@ -74,28 +74,18 @@ public class AwsController {
         return new ResponseEntity<>("File moved", HttpStatus.OK);
     }
 
-
-    @PostMapping("/uploadFile")
-    public ResponseEntity<String> uploadFile(@RequestParam(value = "bucketName") String bucketName, @RequestParam(value = "filePath") String filePath, @RequestParam(value = "file") MultipartFile file) {
-        return new ResponseEntity<>(awsService.uploadFile(bucketName, filePath, file), HttpStatus.OK);
-    }
-
-    @PostMapping("/batch-upload")
-    public ResponseEntity<?> batchUpload(@RequestParam Map<String, MultipartFile> formData, @RequestParam(value = "bucketName") String bucketName, @RequestParam(value = "filePath", required = false) String filePath) {
+    @PostMapping("/upload-files")
+    public ResponseEntity<?> batchUpload(@RequestParam Map<String, MultipartFile> formData, @RequestParam(value = "bucketName") String bucketName, @RequestParam(value = "filePath") String filePath) {
         try {
-            List<URL> storageUrls = new ArrayList<>();
-            String defaultFilePath = "";
-            if (filePath != null) {
-                defaultFilePath = filePath;
-            }
+            List<S3Asset> storageUrls = new ArrayList<>();
 
             for (Map.Entry<String, MultipartFile> entry : formData.entrySet()) {
                 MultipartFile file = entry.getValue();
 
                 if (!file.isEmpty()) {
-                    String s3FileName = awsService.uploadFile(bucketName, defaultFilePath, file);
-                    URL imgUrl = awsService.getS3ObjectURL(bucketName, s3FileName);
-                    storageUrls.add(imgUrl);
+                    String s3FileName = awsService.uploadFile(bucketName, filePath, file);
+                    S3Asset imgAsset = awsService.getS3ObjectAsset(bucketName, s3FileName);
+                    storageUrls.add(imgAsset);
                 }
             }
 

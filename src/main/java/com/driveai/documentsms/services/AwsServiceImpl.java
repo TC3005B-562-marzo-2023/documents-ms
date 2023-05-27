@@ -40,8 +40,8 @@ public class AwsServiceImpl implements AwsS3Service {
         return getAsString(s3Repository.getObject(bucketName, fileName));
     }
 
-    public URL getS3ObjectURL(String bucketName, String fileName) throws IOException {
-        return s3Repository.getObjectURL(bucketName, fileName);
+    public S3Asset getS3ObjectAsset(String bucketName, String fileName) throws IOException {
+        return s3Repository.getObjectAsset(bucketName, fileName);
     }
 
     private static String getAsString(InputStream is) throws IOException {
