@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,7 +83,6 @@ public class S3RepositoryImpl implements S3Repository {
 
     @Override
     public void deleteObject (String bucketName, String fileKey) {
-
         s3Client.deleteObject(bucketName, fileKey);
     }
 

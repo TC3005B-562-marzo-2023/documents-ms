@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -75,7 +74,7 @@ public class AwsController {
     }
 
     @PostMapping("/upload-files")
-    public ResponseEntity<?> batchUpload(@RequestParam Map<String, MultipartFile> formData, @RequestParam(value = "bucketName") String bucketName, @RequestParam(value = "filePath") String filePath) {
+    public ResponseEntity<?> uploadFiles(@RequestParam Map<String, MultipartFile> formData, @RequestParam(value = "bucketName") String bucketName, @RequestParam(value = "filePath") String filePath) {
         try {
             List<S3Asset> storageUrls = new ArrayList<>();
 
