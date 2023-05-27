@@ -100,7 +100,7 @@ public class S3RepositoryImpl implements S3Repository {
     }
 
     @Override
-    public URL getObjectURL(String bucketName, String fileName) throws IOException {
+    public URL getObjectURL(String bucketName, String fileName) {
         return mapS3ToObject(bucketName, fileName).getUrl();
     }
 }
