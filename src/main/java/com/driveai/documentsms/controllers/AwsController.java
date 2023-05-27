@@ -93,4 +93,24 @@ public class AwsController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @PostMapping("/update-file")
+    public ResponseEntity<?> updateFile(
+            @RequestParam(value = "bucketName") String bucketName,
+            @RequestParam(value = "filePath") String filePath,
+            @RequestParam(value = "fileName") String fileName,
+            @RequestParam(value = "newFile") MultipartFile newFile) {
+        try {
+            // Delete the existing file
+            awsService.deleteObject(bucketName, filePath + fileName);
+
+            // Upload the new file
+            String s3FileName = awsService.uploadFile(bucketName, filePath, newFile);
+            S3Asset updatedFile = awsService.getS3ObjectAsset(bucketName, s3FileName);
+
+            return new ResponseEntity<>(updatedFile, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
