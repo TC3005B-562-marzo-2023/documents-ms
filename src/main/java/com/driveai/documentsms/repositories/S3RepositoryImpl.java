@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -95,8 +96,12 @@ public class S3RepositoryImpl implements S3Repository {
     public String uploadFile(String bucketName, String fileName, File fileObj) {
         s3Client.putObject(new PutObjectRequest(bucketName, fileName, fileObj));
         fileObj.delete();
-        return "File uploaded : " + fileName;
+        return fileName;
+//        return "File uploaded : " + fileName;
     }
 
-
+    @Override
+    public URL getObjectURL(String bucketName, String fileName) throws IOException {
+        return mapS3ToObject(bucketName, fileName).getUrl();
+    }
 }
