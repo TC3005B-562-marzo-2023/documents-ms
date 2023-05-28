@@ -80,8 +80,12 @@ public class AwsServiceImpl implements AwsS3Service {
     @Override
     public String uploadFile(String bucketName, String filePath, MultipartFile file, String externalTable, int externalId, int reqDocId) {
         File fileObj = convertMultiPartFileToFile(file);
-        String fileName;
-        fileName = externalTable + "_" + externalId + "_" + reqDocId;
+        String fileName, extension, originalFileName;
+
+        originalFileName = file.getOriginalFilename();
+        extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        fileName = externalTable + "-" + externalId + "-" + "docReqId-" + reqDocId + extension;
+
         return s3Repository.uploadFile(bucketName, filePath + fileName, fileObj);
     }
 
