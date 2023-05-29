@@ -1,5 +1,6 @@
 package com.driveai.documentsms.services;
 
+import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.http.impl.io.AbstractMessageWriter;
@@ -18,20 +19,17 @@ public class ImageParse {
     public static String parseImage(MultipartFile file) throws TesseractException, IOException {
         Tesseract tesseract = new Tesseract();
         try {
-
-            tesseract.setDatapath("D:/Tess4J/tessdata");
-
-            // the path of your tess data folder
-            // inside the extracted file
-            String text = tesseract.doOCR(new File("image.jpg"));
-
+        if (!file.isEmpty()) {
+            File convFile = new File(file.getOriginalFilename());
+            file.transferTo(convFile);
+            tesseract.setDatapath("target/classes/tessdata");
+            String text = tesseract.doOCR(convFile);
             // path of your image file
             System.out.print(text);
-        }
-        catch (TesseractException e) {
+            }
+        } catch (TesseractException e) {
             e.printStackTrace();
         }
-
         return "test";
 
     }

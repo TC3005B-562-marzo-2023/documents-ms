@@ -30,7 +30,7 @@ public class DocumentController {
         this.documentService = documentService;
     }
 
-    @GetMapping("/get-ocr")
+    @PostMapping("/get-ocr")
     public ResponseEntity<?> getOcr(Principal principal, @RequestParam(value = "file") MultipartFile file) throws IOException {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
