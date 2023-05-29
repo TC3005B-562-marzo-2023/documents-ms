@@ -2,6 +2,9 @@ package com.driveai.documentsms.controllers;
 
 import com.driveai.documentsms.models.S3Asset;
 import com.driveai.documentsms.services.AwsS3Service;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -73,8 +76,24 @@ public class AwsController {
         return new ResponseEntity<>("File moved", HttpStatus.OK);
     }
 
-    @PostMapping("/upload-files")
-    public ResponseEntity<?> uploadFiles(@RequestParam Map<String, MultipartFile> formData, @RequestParam(value = "bucketName") String bucketName, @RequestParam(value = "filePath") String filePath) {
+    @ApiResponse(responseCode = "200", description = "Upload document to s3", content = { @Content(schema = @Schema(implementation = S3Asset.class))})
+    @PostMapping("/upload-document")
+    public ResponseEntity<?> uploadDocument(@RequestParam(value = "filePath") String filePath, @RequestParam(value = "file") MultipartFile file, @RequestParam(value="externalTable") String externalTable, @RequestParam(value="externalId") int externalId, @RequestParam(value="reqDocId") int reqDocId) {
+        try {
+            if (!file.isEmpty()) {
+                String s3FileName = awsService.uploadFile("drive-ai-ccm", filePath, file, externalTable, externalId, reqDocId);
+                S3Asset documentAsset = awsService.getS3ObjectAsset("drive-ai-ccm", s3FileName);
+                return new ResponseEntity<>(documentAsset, HttpStatus.OK);
+            }
+            return new ResponseEntity<>("File is empty", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    };
+
+    @ApiResponse(responseCode = "200", description = "Upload image or images to s3", content = { @Content(schema = @Schema(implementation = S3Asset.class))})
+    @PostMapping("/upload-images")
+    public ResponseEntity<?> uploadImages(@RequestParam Map<String, MultipartFile> formData, @RequestParam(value = "filePath") String filePath) {
         try {
             List<S3Asset> storageUrls = new ArrayList<>();
 
@@ -82,11 +101,13 @@ public class AwsController {
                 MultipartFile file = entry.getValue();
 
                 if (!file.isEmpty()) {
-                    String s3FileName = awsService.uploadFile(bucketName, filePath, file);
-                    S3Asset imgAsset = awsService.getS3ObjectAsset(bucketName, s3FileName);
+                    String s3FileName = awsService.uploadImage("public-drive-ai", filePath, file);
+                    S3Asset imgAsset = awsService.getS3ObjectAsset("public-drive-ai", s3FileName);
                     storageUrls.add(imgAsset);
                 }
             }
+
+            if (storageUrls.isEmpty()) return new ResponseEntity<>("No files present", HttpStatus.BAD_REQUEST);
 
             return new ResponseEntity<>(storageUrls, HttpStatus.OK);
         } catch (Exception e) {
@@ -94,23 +115,23 @@ public class AwsController {
         }
     }
 
-    @PostMapping("/update-file")
-    public ResponseEntity<?> updateFile(
-            @RequestParam(value = "bucketName") String bucketName,
-            @RequestParam(value = "filePath") String filePath,
-            @RequestParam(value = "fileName") String fileName,
-            @RequestParam(value = "newFile") MultipartFile newFile) {
-        try {
-            // Delete the existing file
-            awsService.deleteObject(bucketName, filePath + fileName);
-
-            // Upload the new file
-            String s3FileName = awsService.uploadFile(bucketName, filePath, newFile);
-            S3Asset updatedFile = awsService.getS3ObjectAsset(bucketName, s3FileName);
-
-            return new ResponseEntity<>(updatedFile, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @PostMapping("/update-file")
+//    public ResponseEntity<?> updateFile(
+//            @RequestParam(value = "bucketName") String bucketName,
+//            @RequestParam(value = "filePath") String filePath,
+//            @RequestParam(value = "fileName") String fileName,
+//            @RequestParam(value = "newFile") MultipartFile newFile) {
+//        try {
+//            // Delete the existing file
+//            awsService.deleteObject(bucketName, filePath + fileName);
+//
+//            // Upload the new file
+//            String s3FileName = awsService.uploadFile(bucketName, filePath, newFile);
+//            S3Asset updatedFile = awsService.getS3ObjectAsset(bucketName, s3FileName);
+//
+//            return new ResponseEntity<>(updatedFile, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 }

@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class AwsServiceImpl implements AwsS3Service {
@@ -76,9 +78,23 @@ public class AwsServiceImpl implements AwsS3Service {
     }
 
     @Override
-    public String uploadFile(String bucketName, String filePath, MultipartFile file) {
+    public String uploadFile(String bucketName, String filePath, MultipartFile file, String externalTable, int externalId, int reqDocId) {
         File fileObj = convertMultiPartFileToFile(file);
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        String fileName, extension, originalFileName;
+
+        originalFileName = file.getOriginalFilename();
+        extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+        fileName = externalTable + "-" + externalId + "-" + "docReqId-" + reqDocId + extension;
+
+        return s3Repository.uploadFile(bucketName, filePath + fileName, fileObj);
+    }
+
+    @Override
+    public String uploadImage(String bucketName, String filePath, MultipartFile file) {
+        File fileObj = convertMultiPartFileToFile(file);
+        String fileName;
+        UUID uuid = UUID.randomUUID();
+        fileName = uuid + "_" + file.getOriginalFilename();
         return s3Repository.uploadFile(bucketName, filePath + fileName, fileObj);
     }
 
