@@ -114,6 +114,7 @@ public class DocumentController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
     @ApiResponse(responseCode = "200", description = "Document deleted", content = {
             @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                     schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
