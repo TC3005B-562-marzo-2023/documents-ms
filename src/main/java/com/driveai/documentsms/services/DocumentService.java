@@ -1,10 +1,6 @@
 package com.driveai.documentsms.services;
 
-import ch.qos.logback.core.Context;
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.driveai.documentsms.client.UserClient;
 import com.driveai.documentsms.config.AwsS3Config;
@@ -50,11 +46,6 @@ public class DocumentService {
     public void MainController(AwsS3Service awsS3Service) {
         this.awsS3Service = awsS3Service;
     }
-
-    /*
-    public String createUploadURL(String fileName) {
-        return awsS3Service.generatePreSignedUrl(fileName, "drive-ai-ccm", HttpMethod.PUT);
-    }*/
 
     public Document findDocumentById(int id, String email) throws Exception {
         UserDealershipDto userDto = userClient.findUserByEmail(email);
@@ -239,14 +230,30 @@ public class DocumentService {
         return results;
     }
 
-    public String uploadFile(String keyName, File file) throws IOException {
+    public List<DocumentDto> getDocumentsFrom(String externalTable, int externalId, String email) throws Exception {
+        List<DocumentDto> documentList = documentRepository.findAllDtoByExternalIdAndExternalTable(externalId, externalTable);
+        if (documentList.isEmpty()) {
+            throw new Exception("No documents found with type: " + externalTable + " and with id: " + externalId);
+        }
 
+        int userId = userClient.findUserByEmail(email).getId();
+        String title = "Get Documents from";
+        String description = "The user "+userId+" requested documents from"+externalTable+" -> "+externalId;
+        String method = "GET";
+        int status = 200;
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
+        return documentList;
+    }
+
+    public String uploadFile(String keyName, File file) throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();
         //metadata.setContentLength(file.getSize());
-            //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
-
+        //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
         return "File not uploaded: " + keyName;
     }
+
+
 
     public int findDocumentIdByUrl(String url) {
         Document document = documentRepository.findByStorageUrl(url);
