@@ -16,4 +16,6 @@ public interface DocumentRepository extends CrudRepository<Document,Integer> {
     List<DocumentDto> findAllDtoByExternalIdAndExternalTable(int externalId, String externalTable);
     @Procedure(procedureName = "validate_documents")
     String callValidateDocumentsStoredProcedure(int externalId, String externalTable);
+
+    Document findByStorageUrl(String storageUrl);
 }

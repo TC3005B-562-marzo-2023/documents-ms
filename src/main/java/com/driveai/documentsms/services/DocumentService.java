@@ -1,6 +1,7 @@
 package com.driveai.documentsms.services;
 
 import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.driveai.documentsms.client.UserClient;
 import com.driveai.documentsms.config.AwsS3Config;
 import com.driveai.documentsms.dto.CreateDocumentDto;
@@ -16,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -44,10 +47,6 @@ public class DocumentService {
         this.awsS3Service = awsS3Service;
     }
 
-    public String createUploadURL(String fileName) {
-        return awsS3Service.generatePreSignedUrl(fileName, "drive-ai-ccm", HttpMethod.PUT);
-    }
-
     public Document findDocumentById(int id, String email) throws Exception {
         UserDealershipDto userDto = userClient.findUserByEmail(email);
 
@@ -64,8 +63,8 @@ public class DocumentService {
 
     public Document saveDocument(CreateDocumentDto document, String email) throws Exception { //DocumentUploadDto
 
-        DocumentRequired documentRequired = documentRequiredService.findDocumentRequiredById(document.getDocumentRequiredId(), email);
         UserDealershipDto userDto = userClient.findUserByEmail(email);
+        DocumentRequired documentRequired = documentRequiredService.findDocumentRequiredById(document.getDocumentRequiredId(), email);
 
         int userId = userDto.getId();
         String title = "Document Created";
@@ -85,6 +84,8 @@ public class DocumentService {
         }*/
 
         Document newDoc = new Document();
+        newDoc.setExternalId(document.getExternalId());
+        newDoc.setExternalTable(document.getExternalTable());
         newDoc.setDocumentRequiredId(documentRequired);
         newDoc.setStorageUrl(document.getStorageUrl());
         newDoc.setCreatedAt(Timestamp.from(Instant.now()));
@@ -118,7 +119,16 @@ public class DocumentService {
         return documentRepository.save(documentInDB.get());
     }
 
-    public String getDocumentStatus(int externalId, String externalTable) {
+    public String getDocumentStatus(int externalId, String externalTable, String email) throws Exception {
+        UserDealershipDto userDto = userClient.findUserByEmail(email);
+
+        int userId = userDto.getId();
+        String title = "Document Status Found";
+        String description = "The user with id "+userId+" found document status";
+        String method = "GET";
+        int status = 200;
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
         return documentRepository.callValidateDocumentsStoredProcedure(externalId, externalTable);
     }
 
@@ -136,6 +146,32 @@ public class DocumentService {
         for(Document d: documentList) {
             DocumentDto dto = new DocumentDto(d);
             results.add(dto);
+        }
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
+
+        return results;
+    }
+
+    public List<DocumentDto> getDocumentsForAutomotiveGroup(int id, String email) throws Exception {
+        UserDealershipDto userDto = userClient.findUserByEmail(email);
+
+        int userId = userDto.getId();
+        String title = "Document Found All For User";
+        String description = "The user with id "+userId+" found all documents for user with id "+id;
+        String method = "GET";
+        int status = 200;
+
+        List<Document> documentList = documentRepository.findAll();
+        List<DocumentDto> results = new ArrayList<>();
+        for(Document d: documentList) {
+            if(Objects.equals(d.getExternalId(), id)
+                    && !d.isDeleted()
+                    && Objects.equals(d.getExternalTable(), "automotive_group")
+            ) {
+                DocumentDto dto = new DocumentDto(d);
+                results.add(dto);
+            }
         }
 
         logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
@@ -210,22 +246,24 @@ public class DocumentService {
         return documentList;
     }
 
-    // Version de LUIS y Carla para probar front
-//    public String uploadFile(String keyName, MultipartFile file) {
-//       return awsS3Service.uploadFile(keyName, file);
-//    }
-
-    /*
-    public String uploadFile(String keyName, MultipartFile file) throws IOException {
+    public String uploadFile(String keyName, File file) throws IOException {
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getSize());
+        //metadata.setContentLength(file.getSize());
         //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
-        List<Bucket> buckets = awsS3Client.listBuckets();
-        for(Bucket bucket : buckets) {
-            System.out.println(bucket.getName());
-        }
         return "File not uploaded: " + keyName;
     }
-    */
+
+
+
+    public int findDocumentIdByUrl(String url) {
+        Document document = documentRepository.findByStorageUrl(url);
+        if (document != null) {
+            return document.getDocumentId();
+        } else {
+            return -1;
+        }
+    }
+
+
 
 }
