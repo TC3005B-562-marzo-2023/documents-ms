@@ -239,4 +239,24 @@ public class DocumentService {
         return results;
     }
 
+    public String uploadFile(String keyName, File file) throws IOException {
+
+        ObjectMetadata metadata = new ObjectMetadata();
+        //metadata.setContentLength(file.getSize());
+            //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
+
+        return "File not uploaded: " + keyName;
+    }
+
+    public int findDocumentIdByUrl(String url) {
+        Document document = documentRepository.findByStorageUrl(url);
+        if (document != null) {
+            return document.getDocumentId();
+        } else {
+            return -1;
+        }
+    }
+
+
+
 }
