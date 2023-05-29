@@ -1,8 +1,10 @@
 package com.driveai.documentsms.controllers;
 
+import com.driveai.documentsms.dto.DocumentRequiredDto;
 import com.driveai.documentsms.dto.LogDto;
 import com.driveai.documentsms.models.Log;
 import com.driveai.documentsms.services.LogService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +20,34 @@ import java.util.List;
 public class LogController {
     @Autowired
     LogService logService;
+    @ApiResponse(responseCode = "200", description = "List of all logs", content = {
+            @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation =  LogDto.class))
+    })
     @GetMapping("/list")
-    public ResponseEntity<List<LogDto>> getAllDocumentRequired(Principal principal) throws Exception {
+    public ResponseEntity<?> getAllDocumentRequired(Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
-        return new ResponseEntity<>(logService.findAll(email),HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(logService.findAll(email), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
+    @ApiResponse(responseCode = "200", description = "Log found", content = {
+            @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = LogDto.class) )
+    })
     @GetMapping("/find/{id}")
-    public ResponseEntity<Log> findByIdLog(@PathVariable("id") int id, Principal principal) throws Exception {
+    public ResponseEntity<?> findByIdLog(@PathVariable("id") int id, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
-        return new ResponseEntity<>(logService.findById(id, email),HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(logService.findById(id, email), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }

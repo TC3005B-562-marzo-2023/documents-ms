@@ -128,7 +128,16 @@ public class DocumentService {
         return documentRepository.save(documentInDB.get());
     }
 
-    public String getDocumentStatus(int externalId, String externalTable) {
+    public String getDocumentStatus(int externalId, String externalTable, String email) throws Exception {
+        UserDealershipDto userDto = userClient.findUserByEmail(email);
+
+        int userId = userDto.getId();
+        String title = "Document Status Found";
+        String description = "The user with id "+userId+" found document status";
+        String method = "GET";
+        int status = 200;
+
+        logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
         return documentRepository.callValidateDocumentsStoredProcedure(externalId, externalTable);
     }
 

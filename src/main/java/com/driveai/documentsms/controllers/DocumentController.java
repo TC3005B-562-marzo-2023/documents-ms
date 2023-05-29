@@ -5,6 +5,7 @@ import com.driveai.documentsms.dto.CreateDocumentDto;
 import com.driveai.documentsms.dto.UpdateDocumentDto;
 import com.driveai.documentsms.models.Document;
 import com.driveai.documentsms.services.DocumentService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -26,60 +27,125 @@ public class DocumentController {
         this.documentService = documentService;
     }
 
+    @ApiResponse(responseCode = "200", description = "List of all documents", content = {
+            @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
+    })
     @GetMapping("/list")
-    public ResponseEntity<List<DocumentDto>> getAllDocuments(Principal principal) throws Exception {
+    public ResponseEntity<?> getAllDocuments(Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
-        return new ResponseEntity<>(documentService.findAll(email),HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(documentService.findAll(email), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
+    @ApiResponse(responseCode = "200", description = "List of all Automotive Group documents", content = {
+            @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
+    })
     @GetMapping("/get-documents-for-automotive-group/{id}")
-    public ResponseEntity<List<DocumentDto>> getDocumentsForAutomotiveGroup(@PathVariable("id") int id, Principal principal) throws Exception {
+    public ResponseEntity<?> getDocumentsForAutomotiveGroup(@PathVariable("id") int id, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
-        return new ResponseEntity<>(documentService.getDocumentsForAutomotiveGroup(id, email),HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(documentService.getDocumentsForAutomotiveGroup(id, email), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
-    @PostMapping("/create") // DocumentUploadDto
-    public ResponseEntity<Document> createDocument(@RequestBody CreateDocumentDto document, Principal principal) throws Exception {
+    @ApiResponse(responseCode = "200", description = "Document created", content = {
+            @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
+    })
+    @PostMapping("/create")
+    public ResponseEntity<?> createDocument(@RequestBody CreateDocumentDto document, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
-        return new ResponseEntity<>(documentService.saveDocument(document, email), HttpStatus.CREATED);
+        try {
+            return new ResponseEntity<>(documentService.saveDocument(document, email), HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
+    @ApiResponse(responseCode = "200", description = "Document updated", content = {
+            @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
+    })
     @PutMapping("/update/{id}")
-    public ResponseEntity<Document> updateDocument(@PathVariable("id") int id, @RequestBody UpdateDocumentDto document, Principal principal) throws Exception {
+    public ResponseEntity<?> updateDocument(@PathVariable("id") int id, @RequestBody UpdateDocumentDto document, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
-        return new ResponseEntity<>(documentService.updateDocumentById(id, document, email), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(documentService.updateDocumentById(id, document, email), HttpStatus.OK);
+        } catch (Exception e)
+        {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
+    @ApiResponse(responseCode = "200", description = "Document found", content = {
+            @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
+    })
     @GetMapping("/find/{id}")
-    public ResponseEntity<Document> findDocumentById(@PathVariable int id, Principal principal) throws Exception {
+    public ResponseEntity<?> findDocumentById(@PathVariable int id, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
-        return new ResponseEntity<>(documentService.findDocumentById(id, email), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(documentService.findDocumentById(id, email), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
+    @ApiResponse(responseCode = "200", description = "Document deleted", content = {
+            @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
+    })
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Document> deleteDocumentById(@PathVariable("id") int id, Principal principal) throws Exception {
+    public ResponseEntity<?> deleteDocumentById(@PathVariable("id") int id, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
-        return new ResponseEntity<>(documentService.deleteDocumentById(id, email), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(documentService.deleteDocumentById(id, email), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
+    @ApiResponse(responseCode = "200", description = "List of all documents for user", content = {
+            @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
+    })
     @GetMapping("/get-documents-for-user/{id}")
-    public ResponseEntity<List<DocumentDto>> getDocumentsForUser(@PathVariable int id, Principal principal) throws Exception {
+    public ResponseEntity<?> getDocumentsForUser(@PathVariable int id, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken) principal;
         Jwt principalJwt = (Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
-        return new ResponseEntity<>(documentService.getDocumentsForUser(id, email), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(documentService.getDocumentsForUser(id, email), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
+    @ApiResponse(responseCode = "200", description = "Get required document status", content = {
+            @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
+                    schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
+    })
     @GetMapping("/get-req-document-status")
-    public ResponseEntity<String> getDocumentStatus(@RequestParam("id") int externalId, @RequestParam("table") String externalTable, Principal principal) throws Exception {
+    public ResponseEntity<?> getDocumentStatus(@RequestParam("id") int externalId, @RequestParam("table") String externalTable, Principal principal) throws Exception {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
-        return new ResponseEntity<>(documentService.getDocumentStatus(externalId, externalTable), HttpStatus.OK);
+        try {
+            return new ResponseEntity<>(documentService.getDocumentStatus(externalId, externalTable, email), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 }
