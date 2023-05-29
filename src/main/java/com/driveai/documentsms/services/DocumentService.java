@@ -239,5 +239,15 @@ public class DocumentService {
         return "File not uploaded: " + keyName;
     }
 
+    public int findDocumentIdByUrl(String url) {
+        Document document = documentRepository.findByStorageUrl(url);
+        if (document != null) {
+            return document.getDocumentId();
+        } else {
+            return -1;
+        }
+    }
+
+
 
 }

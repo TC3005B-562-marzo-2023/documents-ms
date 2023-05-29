@@ -1,11 +1,16 @@
 package com.driveai.documentsms.controllers;
-
+import com.driveai.documentsms.dto.CreateDocumentDto;
+import com.driveai.documentsms.dto.UpdateDocumentDto;
+import com.driveai.documentsms.models.Document;
 import com.driveai.documentsms.models.S3Asset;
 import com.driveai.documentsms.services.AwsS3Service;
+import com.driveai.documentsms.services.DocumentService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +30,11 @@ import java.util.Map;
 public class AwsController {
 
     private final AwsS3Service awsService;
+    private final DocumentService documentService;
 
-    public AwsController(@Qualifier("awsServiceImpl") AwsS3Service awsService) {
+    public AwsController(@Qualifier("awsServiceImpl") AwsS3Service awsService, DocumentService documentService) {
         this.awsService = awsService;
+        this.documentService = documentService;
     }
 
     @GetMapping("/getS3FileContent")
@@ -108,25 +116,51 @@ public class AwsController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
     }
 
-//    @PostMapping("/update-file")
-//    public ResponseEntity<?> updateFile(
-//            @RequestParam(value = "bucketName") String bucketName,
-//            @RequestParam(value = "filePath") String filePath,
-//            @RequestParam(value = "fileName") String fileName,
-//            @RequestParam(value = "newFile") MultipartFile newFile) {
-//        try {
-//            // Delete the existing file
-//            awsService.deleteObject(bucketName, filePath + fileName);
-//
-//            // Upload the new file
-//            String s3FileName = awsService.uploadFile(bucketName, filePath, newFile);
-//            S3Asset updatedFile = awsService.getS3ObjectAsset(bucketName, s3FileName);
-//
-//            return new ResponseEntity<>(updatedFile, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
+        @PostMapping("/update-document")
+        public ResponseEntity<?> updateDocument(
+                @RequestParam(value = "bucketName") String bucketName,
+                @RequestParam(value = "filePath") String filePath,
+                @RequestParam(value = "fileName") String fileName,
+                @RequestParam(value = "newFile") MultipartFile newFile,
+                @RequestParam(value = "externalTable") String externalTable,
+                @RequestParam(value = "externalId") int externalId,
+                @RequestParam(value = "reqDocId") int reqDocId,
+                Principal principal
+        ) {
+            try {
+                awsService.deleteObject(bucketName, filePath + fileName);
+
+                String s3FileName = awsService.uploadFile(bucketName, filePath, newFile, externalTable, externalId, reqDocId);
+                S3Asset documentAsset = awsService.getS3ObjectAsset(bucketName, s3FileName);
+
+                JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
+                Jwt principalJwt=(Jwt) token.getPrincipal();
+                String email = principalJwt.getClaim("email");
+
+                int oldDocumentId = documentService.findDocumentIdByUrl("https://"+bucketName+".s3.amazonaws.com/"+filePath+fileName);
+
+               if(oldDocumentId != -1){
+                   Document oldDocument = documentService.findDocumentById(oldDocumentId, email);
+                   UpdateDocumentDto updateDocumentDto = new UpdateDocumentDto();
+                   updateDocumentDto.setStorageUrl("https://" + bucketName + ".s3.amazonaws.com/" + s3FileName);
+                   updateDocumentDto.setOcrChecked(oldDocument.getOcrChecked());
+                   updateDocumentDto.setStatus(oldDocument.getStatus());
+                   Document updatedDocument = documentService.updateDocumentById(oldDocumentId, updateDocumentDto, email);
+                }else {
+                   CreateDocumentDto createDocumentDto = new CreateDocumentDto();
+                   createDocumentDto.setDocumentRequiredId(reqDocId);
+                   createDocumentDto.setExternalId(externalId);
+                   createDocumentDto.setExternalTable(externalTable);
+                   createDocumentDto.setStorageUrl("https://" + bucketName + ".s3.amazonaws.com/" + s3FileName);
+                   Document updatedDocument = documentService.saveDocument(createDocumentDto, email);
+               }
+
+                return new ResponseEntity<>(documentAsset, HttpStatus.OK);
+            } catch (Exception e) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
 }
