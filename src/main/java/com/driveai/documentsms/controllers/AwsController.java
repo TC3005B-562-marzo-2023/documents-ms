@@ -5,6 +5,9 @@ import com.driveai.documentsms.models.Document;
 import com.driveai.documentsms.models.S3Asset;
 import com.driveai.documentsms.services.AwsS3Service;
 import com.driveai.documentsms.services.DocumentService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -81,6 +84,7 @@ public class AwsController {
         return new ResponseEntity<>("File moved", HttpStatus.OK);
     }
 
+    @ApiResponse(responseCode = "200", description = "Upload document to s3", content = { @Content(schema = @Schema(implementation = S3Asset.class))})
     @PostMapping("/upload-document")
     public ResponseEntity<?> uploadDocument(@RequestParam(value = "filePath") String filePath, @RequestParam(value = "file") MultipartFile file, @RequestParam(value="externalTable") String externalTable, @RequestParam(value="externalId") int externalId, @RequestParam(value="reqDocId") int reqDocId) {
         try {
@@ -95,6 +99,7 @@ public class AwsController {
         }
     };
 
+    @ApiResponse(responseCode = "200", description = "Upload image or images to s3", content = { @Content(schema = @Schema(implementation = S3Asset.class))})
     @PostMapping("/upload-images")
     public ResponseEntity<?> uploadImages(@RequestParam Map<String, MultipartFile> formData, @RequestParam(value = "filePath") String filePath) {
         try {
@@ -116,7 +121,6 @@ public class AwsController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
         @PostMapping("/update-document")
