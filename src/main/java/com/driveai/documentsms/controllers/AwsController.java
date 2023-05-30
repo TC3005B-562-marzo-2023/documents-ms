@@ -124,7 +124,7 @@ public class AwsController {
         }
     }
 
-        @PostMapping("/update-document")
+        @PostMapping("/create-update-document")
         public ResponseEntity<?> updateDocument(
                 @RequestParam(value = "filePath") String filePath,
                 @RequestParam(value = "newFile") MultipartFile newFile,
@@ -134,10 +134,9 @@ public class AwsController {
                 Principal principal
         ) {
             try {
+                int oldDocumentId = documentService.findDocumentByExternalTableIdAndReqDocId(externalTable, externalId, reqDocId);
                 String bucketName = "drive-ai-ccm";
                 String fileName = externalTable + "-" + externalId + "-" + "docReqId-" + reqDocId;
-                awsService.deleteObject(bucketName, filePath + fileName);
-
                 String s3FileName = awsService.uploadFile(bucketName, filePath, newFile, externalTable, externalId, reqDocId);
                 S3Asset documentAsset = awsService.getS3ObjectAsset(bucketName, s3FileName);
 
@@ -145,18 +144,22 @@ public class AwsController {
                 Jwt principalJwt=(Jwt) token.getPrincipal();
                 String email = principalJwt.getClaim("email");
 
-                int oldDocumentId = documentService.findDocumentByExternalTableIdAndReqDocId(externalTable, externalId, reqDocId);
-
-                System.out.println("\n\n\n\n" + s3FileName + "\n\n\n\n");
-
                if(oldDocumentId != -1){
                    Document oldDocument = documentService.findDocumentById(oldDocumentId, email);
+                   String storageUrl = oldDocument.getStorageUrl();
+
+                   String[] parts = storageUrl.split("/");
+                   String folder = parts[3] + "/";
+                   String extension = parts[4].substring(parts[4].lastIndexOf("."));
+                   awsService.deleteObject(bucketName, folder + fileName + extension);
+
                    UpdateDocumentDto updateDocumentDto = new UpdateDocumentDto();
                    updateDocumentDto.setStorageUrl("https://" + bucketName + ".s3.amazonaws.com/" + s3FileName);
                    updateDocumentDto.setOcrChecked(oldDocument.getOcrChecked());
                    updateDocumentDto.setStatus(oldDocument.getStatus());
                    documentService.updateDocumentById(oldDocumentId, updateDocumentDto, email);
                 } else {
+
                    CreateDocumentDto createDocumentDto = new CreateDocumentDto();
                    createDocumentDto.setDocumentRequiredId(reqDocId);
                    createDocumentDto.setExternalId(externalId);
