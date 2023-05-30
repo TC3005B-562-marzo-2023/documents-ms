@@ -7,6 +7,8 @@ import org.apache.http.impl.io.AbstractMessageWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -18,19 +20,23 @@ import java.util.Objects;
 public class ImageParse {
     public static String parseImage(MultipartFile file) throws TesseractException, IOException {
         Tesseract tesseract = new Tesseract();
+        String text = "";
         try {
         if (!file.isEmpty()) {
-            File convFile = new File(file.getOriginalFilename());
-            file.transferTo(convFile);
+            BufferedImage convFile = ImageIO.read(file.getInputStream());
+            File temp=File.createTempFile("temp","png");
+            ImageIO.write(convFile,"png",temp);
             tesseract.setDatapath("target/classes/tessdata");
-            String text = tesseract.doOCR(convFile);
+            tesseract.setLanguage("eng");
+            text = tesseract.doOCR(temp);
+            temp.delete();
             // path of your image file
             System.out.print(text);
             }
         } catch (TesseractException e) {
             e.printStackTrace();
         }
-        return "test";
+        return text;
 
     }
 }
