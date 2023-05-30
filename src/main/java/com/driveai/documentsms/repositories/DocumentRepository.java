@@ -3,6 +3,7 @@ package com.driveai.documentsms.repositories;
 
 import com.driveai.documentsms.dto.DocumentDto;
 import com.driveai.documentsms.models.Document;
+import com.driveai.documentsms.models.DocumentRequired;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.CrudRepository;
@@ -18,4 +19,6 @@ public interface DocumentRepository extends CrudRepository<Document,Integer> {
     String callValidateDocumentsStoredProcedure(int externalId, String externalTable);
 
     Document findByStorageUrl(String storageUrl);
+
+    Document findDocumentByExternalTableAndExternalIdAndDocumentRequiredId(String externalTable, int externalId, DocumentRequired reqDocId);
 }

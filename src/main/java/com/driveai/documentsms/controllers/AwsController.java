@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -125,9 +126,7 @@ public class AwsController {
 
         @PostMapping("/update-document")
         public ResponseEntity<?> updateDocument(
-                @RequestParam(value = "bucketName") String bucketName,
                 @RequestParam(value = "filePath") String filePath,
-                @RequestParam(value = "fileName") String fileName,
                 @RequestParam(value = "newFile") MultipartFile newFile,
                 @RequestParam(value = "externalTable") String externalTable,
                 @RequestParam(value = "externalId") int externalId,
@@ -135,6 +134,8 @@ public class AwsController {
                 Principal principal
         ) {
             try {
+                String bucketName = "drive-ai-ccm";
+                String fileName = externalTable + "-" + externalId + "-" + "docReqId-" + reqDocId;
                 awsService.deleteObject(bucketName, filePath + fileName);
 
                 String s3FileName = awsService.uploadFile(bucketName, filePath, newFile, externalTable, externalId, reqDocId);
@@ -144,7 +145,9 @@ public class AwsController {
                 Jwt principalJwt=(Jwt) token.getPrincipal();
                 String email = principalJwt.getClaim("email");
 
-                int oldDocumentId = documentService.findDocumentIdByUrl("https://"+bucketName+".s3.amazonaws.com/"+filePath+fileName);
+                int oldDocumentId = documentService.findDocumentByExternalTableIdAndReqDocId(externalTable, externalId, reqDocId);
+
+                System.out.println("\n\n\n\n" + s3FileName + "\n\n\n\n");
 
                if(oldDocumentId != -1){
                    Document oldDocument = documentService.findDocumentById(oldDocumentId, email);
@@ -152,14 +155,14 @@ public class AwsController {
                    updateDocumentDto.setStorageUrl("https://" + bucketName + ".s3.amazonaws.com/" + s3FileName);
                    updateDocumentDto.setOcrChecked(oldDocument.getOcrChecked());
                    updateDocumentDto.setStatus(oldDocument.getStatus());
-                   Document updatedDocument = documentService.updateDocumentById(oldDocumentId, updateDocumentDto, email);
-                }else {
+                   documentService.updateDocumentById(oldDocumentId, updateDocumentDto, email);
+                } else {
                    CreateDocumentDto createDocumentDto = new CreateDocumentDto();
                    createDocumentDto.setDocumentRequiredId(reqDocId);
                    createDocumentDto.setExternalId(externalId);
                    createDocumentDto.setExternalTable(externalTable);
                    createDocumentDto.setStorageUrl("https://" + bucketName + ".s3.amazonaws.com/" + s3FileName);
-                   Document updatedDocument = documentService.saveDocument(createDocumentDto, email);
+                   documentService.saveDocument(createDocumentDto, email);
                }
 
                 return new ResponseEntity<>(documentAsset, HttpStatus.OK);

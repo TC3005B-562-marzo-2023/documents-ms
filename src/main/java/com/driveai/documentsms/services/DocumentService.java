@@ -264,6 +264,16 @@ public class DocumentService {
         }
     }
 
+    public int findDocumentByExternalTableIdAndReqDocId (String externalTable, int externalId, int reqDocId) {
+        Optional<DocumentRequired> docReqOptional = documentRequiredRepository.findById(reqDocId);
+        Document document = documentRepository.findDocumentByExternalTableAndExternalIdAndDocumentRequiredId(externalTable, externalId, docReqOptional.get());
+        if (document != null) {
+            return document.getDocumentId();
+        } else {
+            return -1;
+        }
+    }
+
 
 
 }
