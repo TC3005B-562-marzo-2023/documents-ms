@@ -81,11 +81,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-<!--        <dependency>-->
-<!--            <groupId>net.officefloor.tutorial</groupId>-->
-<!--            <artifactId>GwtService</artifactId>-->
-<!--            <version>2.16.0</version>-->
-<!--        </dependency>-->
     </dependencies>
 
 	<dependencyManagement>
