@@ -50,9 +50,6 @@ jobs:
           AMAZON_AWS_ACCESS_KEY: ${{ secrets.AMAZON_AWS_ACCESS_KEY }}
           AMAZON_AWS_REGION: ${{ secrets.AMAZON_AWS_REGION }}
           AMAZON_AWS_SECRET_KEY: ${{ secrets.AMAZON_AWS_SECRET_KEY }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKER_REPO: ${{ secrets.DOCKER_REPO }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
           EUREKA_PORT: ${{ secrets.EUREKA_PORT }}
           IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
           PROJECT_ID: ${{ secrets.PROJECT_ID }}
