@@ -1,7 +1,6 @@
 package com.driveai.documentsms.services;
 
 import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.driveai.documentsms.client.UserClient;
 import com.driveai.documentsms.config.AwsS3Config;
 import com.driveai.documentsms.dto.CreateDocumentDto;
@@ -15,12 +14,7 @@ import com.driveai.documentsms.repositories.DocumentRepository;
 import com.driveai.documentsms.repositories.DocumentRequiredRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.print.Doc;
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -62,7 +56,7 @@ public class DocumentService {
         Optional<Document> optionalDocument = documentRepository.findById(id);
         if (optionalDocument.isPresent()) {
             document = optionalDocument.get();
-            String newUrl = obtainPreSignedURLFromDocumentToViewOnly(document, "automotive_group", id);
+            String newUrl = obtainPreSignedURLFromDocumentToViewOnly(document);
             document.setStorageUrl(newUrl);
             return document;
         } else {
@@ -145,7 +139,7 @@ public class DocumentService {
         List<DocumentDto> results = new ArrayList<>();
         for(Document d: documentList) {
             DocumentDto dto = new DocumentDto(d);
-            String newUrl = obtainPreSignedURLFromDocumentToViewOnly(dto, dto.getExternalTable(), dto.getExternalId());
+            String newUrl = obtainPreSignedURLFromDocumentToViewOnly(dto);
             dto.setStorageUrl(newUrl);
             results.add(dto);
         }
@@ -172,7 +166,7 @@ public class DocumentService {
                     && Objects.equals(d.getExternalTable(), "automotive_group")
             ) {
                 DocumentDto dto = new DocumentDto(d);
-                String newUrl = obtainPreSignedURLFromDocumentToViewOnly(dto, "automotive_group", id);
+                String newUrl = obtainPreSignedURLFromDocumentToViewOnly(dto);
                 dto.setStorageUrl(newUrl);
                 results.add(dto);
             }
@@ -225,7 +219,7 @@ public class DocumentService {
                     && Objects.equals(d.getExternalTable(), "user")
             ) {
                 DocumentDto dto = new DocumentDto(d);
-                String newUrl = obtainPreSignedURLFromDocumentToViewOnly(dto, "user", id);
+                String newUrl = obtainPreSignedURLFromDocumentToViewOnly(dto);
                 dto.setStorageUrl(newUrl);
                 results.add(dto);
             }
@@ -246,7 +240,7 @@ public class DocumentService {
 
         for (DocumentDto document : documentList) {
             if(!document.isDeleted()) {
-                String newUrl = obtainPreSignedURLFromDocumentToViewOnly(document, externalTable, externalId);
+                String newUrl = obtainPreSignedURLFromDocumentToViewOnly(document);
                 document.setStorageUrl(newUrl);
                 filteredList.add(document);
             }
@@ -281,17 +275,15 @@ public class DocumentService {
         }
     }
 
-    public String obtainPreSignedURLFromDocumentToViewOnly (DocumentDto document, String externalTable, int externalId) throws Exception {
+    public String obtainPreSignedURLFromDocumentToViewOnly (DocumentDto document) throws Exception {
         URL url = new URL(document.getStorageUrl());
         String fileName = url.getPath().substring(1);
         return awsS3Service.getPreSignedURL(fileName, "drive-ai-ccm", HttpMethod.GET);
     }
 
-    public String obtainPreSignedURLFromDocumentToViewOnly(Document document, String externalTable, int externalId) throws Exception {
+    public String obtainPreSignedURLFromDocumentToViewOnly(Document document) throws Exception {
         URL url = new URL(document.getStorageUrl());
         String fileName = url.getPath().substring(1);
         return awsS3Service.getPreSignedURL(fileName, "drive-ai-ccm", HttpMethod.GET);
     }
-
-
 }
