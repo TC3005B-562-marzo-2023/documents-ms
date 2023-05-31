@@ -1,7 +1,6 @@
 package com.driveai.documentsms.services;
 
 import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.driveai.documentsms.client.UserClient;
 import com.driveai.documentsms.config.AwsS3Config;
 import com.driveai.documentsms.dto.CreateDocumentDto;
@@ -15,16 +14,11 @@ import com.driveai.documentsms.repositories.DocumentRepository;
 import com.driveai.documentsms.repositories.DocumentRequiredRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DocumentService {
@@ -49,16 +43,25 @@ public class DocumentService {
 
     public Document findDocumentById(int id, String email) throws Exception {
         UserDealershipDto userDto = userClient.findUserByEmail(email);
+        Document document;
 
         int userId = userDto.getId();
         String title = "Document Found";
-        String description = "The user with id "+userId+" found document with id "+id;
+        String description = "User: "+userId+" found document: "+id;
         String method = "GET";
         int status = 200;
 
         logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
 
-        return documentRepository.findById(id).orElseThrow(() -> new Exception("Document not found with id: " + id));
+        Optional<Document> optionalDocument = documentRepository.findById(id);
+        if (optionalDocument.isPresent()) {
+            document = optionalDocument.get();
+            String newUrl = obtainPreSignedURLFromDocumentToViewOnly(document);
+            document.setStorageUrl(newUrl);
+            return document;
+        } else {
+            throw new Exception("Document with id " + id + " not found");
+        }
     }
 
     public Document saveDocument(CreateDocumentDto document, String email) throws Exception { //DocumentUploadDto
@@ -68,20 +71,11 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Created";
-        String description = "The user with id "+userId+" created document";
+        String description = "User: "+userId+" created document";
         String method = "POST";
         int status = 200;
 
         if(documentRequired == null) throw new Exception("Document required not found with id: " + document.getDocumentRequiredId());
-
-        /*
-        if(userDto.getUser_type().equals("AUTOMOTIVE_GROUP_ADMIN")) {
-            documentRequired.setExternalTable("automotive_group");
-            //documentRequired.setExternalId(userDto.getDealershipId());
-        } else {
-            documentRequired.setExternalTable("user");
-            documentRequired.setExternalId(userDto.getId());
-        }*/
 
         Document newDoc = new Document();
         newDoc.setExternalId(document.getExternalId());
@@ -102,7 +96,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Updated";
-        String description = "The user with id "+userId+" updated document with id "+id;
+        String description = "User: "+userId+" updated document: "+id;
         String method = "PUT";
         int status = 200;
 
@@ -124,7 +118,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Status Found";
-        String description = "The user with id "+userId+" found document status";
+        String description = "User: "+userId+" found doc status";
         String method = "GET";
         int status = 200;
 
@@ -137,7 +131,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Found All";
-        String description = "The user with id "+userId+" found all documents";
+        String description = "User: "+userId+" found all docs";
         String method = "GET";
         int status = 200;
 
@@ -145,6 +139,8 @@ public class DocumentService {
         List<DocumentDto> results = new ArrayList<>();
         for(Document d: documentList) {
             DocumentDto dto = new DocumentDto(d);
+            String newUrl = obtainPreSignedURLFromDocumentToViewOnly(dto);
+            dto.setStorageUrl(newUrl);
             results.add(dto);
         }
 
@@ -158,7 +154,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Found All For User";
-        String description = "The user with id "+userId+" found all documents for user with id "+id;
+        String description = "User: "+userId+" got all user docs of AG: "+id;
         String method = "GET";
         int status = 200;
 
@@ -170,6 +166,8 @@ public class DocumentService {
                     && Objects.equals(d.getExternalTable(), "automotive_group")
             ) {
                 DocumentDto dto = new DocumentDto(d);
+                String newUrl = obtainPreSignedURLFromDocumentToViewOnly(dto);
+                dto.setStorageUrl(newUrl);
                 results.add(dto);
             }
         }
@@ -185,7 +183,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Deleted";
-        String description = "The user with id "+userId+" deleted document with id "+id;
+        String description = "User: "+userId+" deleted doc: "+id;
         String method = "DELETE";
         int status = 200;
 
@@ -209,7 +207,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Found All For User";
-        String description = "The user with id "+userId+" found all documents for user with id "+id;
+        String description = "User: "+userId+" found user docs of user: "+id;
         String method = "GET";
         int status = 200;
 
@@ -221,6 +219,8 @@ public class DocumentService {
                     && Objects.equals(d.getExternalTable(), "user")
             ) {
                 DocumentDto dto = new DocumentDto(d);
+                String newUrl = obtainPreSignedURLFromDocumentToViewOnly(dto);
+                dto.setStorageUrl(newUrl);
                 results.add(dto);
             }
         }
@@ -232,28 +232,29 @@ public class DocumentService {
 
     public List<DocumentDto> getDocumentsFrom(String externalTable, int externalId, String email) throws Exception {
         List<DocumentDto> documentList = documentRepository.findAllDtoByExternalIdAndExternalTable(externalId, externalTable);
+        ArrayList<DocumentDto> filteredList = new ArrayList<>();
+
         if (documentList.isEmpty()) {
             throw new Exception("No documents found with type: " + externalTable + " and with id: " + externalId);
         }
 
+        for (DocumentDto document : documentList) {
+            if(!document.isDeleted()) {
+                String newUrl = obtainPreSignedURLFromDocumentToViewOnly(document);
+                document.setStorageUrl(newUrl);
+                filteredList.add(document);
+            }
+        }
+
         int userId = userClient.findUserByEmail(email).getId();
         String title = "Get Documents from";
-        String description = "The user "+userId+" requested documents from"+externalTable+" -> "+externalId;
+        String description = "User: "+userId+" req docs from "+externalTable+" -> "+externalId;
         String method = "GET";
         int status = 200;
         logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
 
-        return documentList;
+        return filteredList;
     }
-
-    public String uploadFile(String keyName, File file) throws IOException {
-        ObjectMetadata metadata = new ObjectMetadata();
-        //metadata.setContentLength(file.getSize());
-        //awsS3Client.putObject("drive-ai-ccm", keyName, file.getInputStream(), metadata);
-        return "File not uploaded: " + keyName;
-    }
-
-
 
     public int findDocumentIdByUrl(String url) {
         Document document = documentRepository.findByStorageUrl(url);
@@ -274,6 +275,15 @@ public class DocumentService {
         }
     }
 
+    public String obtainPreSignedURLFromDocumentToViewOnly (DocumentDto document) throws Exception {
+        URL url = new URL(document.getStorageUrl());
+        String fileName = url.getPath().substring(1);
+        return awsS3Service.getPreSignedURL(fileName, "drive-ai-ccm", HttpMethod.GET);
+    }
 
-
+    public String obtainPreSignedURLFromDocumentToViewOnly(Document document) throws Exception {
+        URL url = new URL(document.getStorageUrl());
+        String fileName = url.getPath().substring(1);
+        return awsS3Service.getPreSignedURL(fileName, "drive-ai-ccm", HttpMethod.GET);
+    }
 }

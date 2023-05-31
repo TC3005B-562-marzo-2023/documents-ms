@@ -1,5 +1,6 @@
 package com.driveai.documentsms.repositories;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.driveai.documentsms.models.S3Asset;
 
@@ -16,4 +17,5 @@ public interface S3Repository {
     void moveObject(String bucketName, String fileKey, String destinationFileKey);
     void deleteObject(String bucketName, String fileKey);
     S3Asset getObjectAsset(String bucketName, String fileName);
+    String generateViewPreSignedURL(String filePath, String bucketName, HttpMethod httpMethod);
 }

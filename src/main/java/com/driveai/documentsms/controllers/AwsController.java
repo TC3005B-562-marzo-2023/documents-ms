@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.URL;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,7 +127,7 @@ public class AwsController {
 
         @PostMapping("/create-update-document")
         public ResponseEntity<?> updateDocument(
-                @RequestParam(value = "filePath") String filePath,
+                @RequestParam(value = "filePath", required = false) String filePath,
                 @RequestParam(value = "newFile") MultipartFile newFile,
                 @RequestParam(value = "externalTable") String externalTable,
                 @RequestParam(value = "externalId") int externalId,
@@ -136,8 +137,9 @@ public class AwsController {
             try {
                 int oldDocumentId = documentService.findDocumentByExternalTableIdAndReqDocId(externalTable, externalId, reqDocId);
                 String bucketName = "drive-ai-ccm";
-                String fileName = externalTable + "-" + externalId + "-" + "docReqId-" + reqDocId;
-                String s3FileName = awsService.uploadFile(bucketName, filePath, newFile, externalTable, externalId, reqDocId);
+                String defaultFilePath = "";
+                if (filePath != null) defaultFilePath = filePath;
+                String s3FileName = awsService.uploadFile(bucketName, defaultFilePath, newFile, externalTable, externalId, reqDocId);
                 S3Asset documentAsset = awsService.getS3ObjectAsset(bucketName, s3FileName);
 
                 JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
@@ -147,11 +149,9 @@ public class AwsController {
                if(oldDocumentId != -1){
                    Document oldDocument = documentService.findDocumentById(oldDocumentId, email);
                    String storageUrl = oldDocument.getStorageUrl();
-
-                   String[] parts = storageUrl.split("/");
-                   String folder = parts[3] + "/";
-                   String extension = parts[4].substring(parts[4].lastIndexOf("."));
-                   awsService.deleteObject(bucketName, folder + fileName + extension);
+                   URL url = new URL(storageUrl);
+                   String objectKey = url.getPath().substring(1);
+                   awsService.deleteObject(bucketName, objectKey);
 
                    UpdateDocumentDto updateDocumentDto = new UpdateDocumentDto();
                    updateDocumentDto.setStorageUrl("https://" + bucketName + ".s3.amazonaws.com/" + s3FileName);
@@ -159,7 +159,6 @@ public class AwsController {
                    updateDocumentDto.setStatus(oldDocument.getStatus());
                    documentService.updateDocumentById(oldDocumentId, updateDocumentDto, email);
                 } else {
-
                    CreateDocumentDto createDocumentDto = new CreateDocumentDto();
                    createDocumentDto.setDocumentRequiredId(reqDocId);
                    createDocumentDto.setExternalId(externalId);

@@ -1,5 +1,6 @@
 package com.driveai.documentsms.services;
 
+import com.amazonaws.HttpMethod;
 import com.driveai.documentsms.models.S3Asset;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,4 +19,5 @@ public interface AwsS3Service {
     void moveObject(String bucketName, String fileKey, String destinationFileKey);
     void deleteObject (String bucketName, String fileKey);
     S3Asset getS3ObjectAsset(String bucketName, String fileKey) throws IOException;
+    String getPreSignedURL(String filePath, String bucketName, HttpMethod httpMethod);
 }
