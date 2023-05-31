@@ -64,6 +64,6 @@ jobs:
             --image gcr.io/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_NAME }}:${{ github.sha }} \
             --platform managed \
             --region ${{ secrets.REGION }} \
-            --port 8081 \
+            --port 8004 \
             --allow-unauthenticated \
             --set-env-vars "dbName=$DB_NAME, dbPort=$DB_PORT, dbPwd=$DB_PWD, dbUrl=$DB_URL, dbUser=$DB_USER, kcAdminPassword=$KC_ADMIN_PASSWORD, kcAdminUsername=$KC_ADMIN_USERNAME, kcClient=$KC_CLIENT, kcRealm=$KC_REALM, kcUrl=$KC_URL, msPort=$MS_PORT,amazonAwsAccessKey=$AMAZON_AWS_ACCESS_KEY,amazonAwsRegion=$AMAZON_AWS_REGION, amazonAwsSecretKey=$AMAZON_AWS_SECRET_KEY"
