@@ -30,7 +30,7 @@ public class DocumentRequiredService {
 
         int userId = userDto.getId();
         String title = "Document Required Found";
-        String description = "The user with id "+userId+" found document required with id "+id;
+        String description = "User: "+userId+" found docreq: "+id;
         String method = "GET";
         int status = 200;
 
@@ -45,7 +45,7 @@ public class DocumentRequiredService {
 
         int userId = userDto.getId();
         String title = "Document Required Created";
-        String description = "The user with id "+userId+" created document required";
+        String description = "User: "+userId+" created docreq";
         String method = "POST";
         int status = 201;
 
@@ -77,7 +77,7 @@ public class DocumentRequiredService {
 
         int userId = userDto.getId();
         String title = "Document Required Updated";
-        String description = "The user with id "+userId+" updated document required with id "+id;
+        String description = "User: "+userId+" put docreq id: "+id;
         String method = "PUT";
         int status = 200;
 
@@ -100,7 +100,7 @@ public class DocumentRequiredService {
 
         int userId = userDto.getId();
         String title = "Document Required Found All";
-        String description = "The user with id "+userId+" found all document required";
+        String description = "User: "+userId+" got all docreqs";
         String method = "GET";
         int status = 200;
 
@@ -122,7 +122,7 @@ public class DocumentRequiredService {
 
         int userId = userDto.getId();
         String title = "Document Required Deleted";
-        String description = "The user with id "+userId+" deleted document required with id "+id;
+        String description = "User: "+userId+" deleted docreq: "+id;
         String method = "DELETE";
         int status = 200;
 
@@ -139,8 +139,8 @@ public class DocumentRequiredService {
         UserDealershipDto userDto = userClient.findUserByEmail(email);
 
         int userId = userDto.getId();
-        String title = "Document Required Found All Test Drive";
-        String description = "The user with id "+userId+" found all document required for test drive";
+        String title = "DocumentReq for Test Drive";
+        String description = "User: "+userId+" got testdrive docs";
         String method = "GET";
         int status = 200;
 
@@ -166,7 +166,7 @@ public class DocumentRequiredService {
 
         int userId = userDto.getId();
         String title = "Document Required Found All Sale";
-        String description = "The user with id "+userId+" found all document required for sale";
+        String description = "User: "+userId+" found docReq for sale";
         String method = "GET";
         int status = 200;
 
