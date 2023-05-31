@@ -39,7 +39,6 @@ jobs:
           DB_PWD: ${{ secrets.DB_PWD }}
           DB_URL: ${{ secrets.DB_URL }}
           DB_USER: ${{ secrets.DB_USER }}
-          EUREKA_URL: ${{ secrets.EUREKA_URL }}
           KC_ADMIN_PASSWORD: ${{ secrets.KC_ADMIN_PASSWORD }}
           KC_ADMIN_USERNAME: ${{ secrets.KC_ADMIN_USERNAME }}
           KC_CLIENT: ${{ secrets.KC_CLIENT }}
@@ -50,7 +49,6 @@ jobs:
           AMAZON_AWS_ACCESS_KEY: ${{ secrets.AMAZON_AWS_ACCESS_KEY }}
           AMAZON_AWS_REGION: ${{ secrets.AMAZON_AWS_REGION }}
           AMAZON_AWS_SECRET_KEY: ${{ secrets.AMAZON_AWS_SECRET_KEY }}
-          EUREKA_PORT: ${{ secrets.EUREKA_PORT }}
           IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
           PROJECT_ID: ${{ secrets.PROJECT_ID }}
           REGION: ${{ secrets.REGION }}
@@ -68,4 +66,4 @@ jobs:
             --region ${{ secrets.REGION }} \
             --port 8081 \
             --allow-unauthenticated \
-            --set-env-vars "dbName=$DB_NAME, dbPort=$DB_PORT, dbPwd=$DB_PWD, dbUrl=$DB_URL, dbUser=$DB_USER, eurekaUrl=$EUREKA_URL, kcAdminPassword=$KC_ADMIN_PASSWORD, kcAdminUsername=$KC_ADMIN_USERNAME, kcClient=$KC_CLIENT, kcRealm=$KC_REALM, kcUrl=$KC_URL, msPort=$MS_PORT,amazonAwsAccessKey=$AMAZON_AWS_ACCESS_KEY,amazonAwsRegion=$AMAZON_AWS_REGION, amazonAwsSecretKey=$AMAZON_AWS_SECRET_KEY, eurekaPort=$EUREKA_PORT"
+            --set-env-vars "dbName=$DB_NAME, dbPort=$DB_PORT, dbPwd=$DB_PWD, dbUrl=$DB_URL, dbUser=$DB_USER, kcAdminPassword=$KC_ADMIN_PASSWORD, kcAdminUsername=$KC_ADMIN_USERNAME, kcClient=$KC_CLIENT, kcRealm=$KC_REALM, kcUrl=$KC_URL, msPort=$MS_PORT,amazonAwsAccessKey=$AMAZON_AWS_ACCESS_KEY,amazonAwsRegion=$AMAZON_AWS_REGION, amazonAwsSecretKey=$AMAZON_AWS_SECRET_KEY"
