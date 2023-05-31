@@ -5,6 +5,7 @@ import com.driveai.documentsms.dto.CreateDocumentDto;
 import com.driveai.documentsms.dto.UpdateDocumentDto;
 import com.driveai.documentsms.models.Document;
 import com.driveai.documentsms.services.DocumentService;
+import com.driveai.documentsms.services.ImageParse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,8 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
+import java.io.*;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +34,21 @@ public class DocumentController {
     DocumentService documentService;
     public DocumentController(DocumentService documentService) {
         this.documentService = documentService;
+    }
+
+    @PostMapping("/get-ocr")
+    public ResponseEntity<?> getOcr(Principal principal, @RequestParam(value = "file") MultipartFile file) throws IOException {
+        JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
+        Jwt principalJwt=(Jwt) token.getPrincipal();
+        String email = principalJwt.getClaim("email");
+
+        InputStream inputStream =  new BufferedInputStream(file.getInputStream());
+
+        try {
+            return new ResponseEntity<>(ImageParse.recognizeText(inputStream), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @ApiResponse(responseCode = "200", description = "List of all documents", content = {
