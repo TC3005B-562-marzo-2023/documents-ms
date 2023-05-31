@@ -1,5 +1,6 @@
 package com.driveai.documentsms.services;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.util.StringUtils;
 import com.driveai.documentsms.models.S3Asset;
 import com.driveai.documentsms.repositories.S3Repository;
@@ -106,5 +107,10 @@ public class AwsServiceImpl implements AwsS3Service {
             log.error("Error converting multipartFile to file", e);
         }
         return convertedFile;
+    }
+
+    @Override
+    public String getPreSignedURL(String filePath, String bucketName, HttpMethod httpMethod) {
+        return s3Repository.generateViewPreSignedURL(filePath, bucketName, httpMethod);
     }
 }
