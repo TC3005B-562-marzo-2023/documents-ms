@@ -36,6 +36,7 @@ public class DocumentController {
     public DocumentController(DocumentService documentService) {
         this.documentService = documentService;
     }
+<<<<<<< Updated upstream
 
     @PostMapping("/get-ocr")
     public ResponseEntity<?> getOcr(Principal principal, @RequestParam(value = "file") MultipartFile file) throws IOException {
@@ -48,6 +49,8 @@ public class DocumentController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+=======
+>>>>>>> Stashed changes
     @ApiResponse(responseCode = "200", description = "List of all documents", content = {
             @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                     schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
