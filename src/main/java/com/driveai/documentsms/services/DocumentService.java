@@ -47,7 +47,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Found";
-        String description = "The user with id "+userId+" found document with id "+id;
+        String description = "User: "+userId+" found document: "+id;
         String method = "GET";
         int status = 200;
 
@@ -71,7 +71,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Created";
-        String description = "The user with id "+userId+" created document";
+        String description = "User: "+userId+" created document";
         String method = "POST";
         int status = 200;
 
@@ -96,7 +96,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Updated";
-        String description = "The user with id "+userId+" updated document with id "+id;
+        String description = "User: "+userId+" updated document: "+id;
         String method = "PUT";
         int status = 200;
 
@@ -118,7 +118,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Status Found";
-        String description = "The user with id "+userId+" found document status";
+        String description = "User: "+userId+" found doc status";
         String method = "GET";
         int status = 200;
 
@@ -131,7 +131,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Found All";
-        String description = "The user with id "+userId+" found all documents";
+        String description = "User: "+userId+" found all docs";
         String method = "GET";
         int status = 200;
 
@@ -154,7 +154,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Found All For User";
-        String description = "The user with id "+userId+" found all documents for user with id "+id;
+        String description = "User: "+userId+" got all user docs of AG: "+id;
         String method = "GET";
         int status = 200;
 
@@ -183,7 +183,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Deleted";
-        String description = "The user with id "+userId+" deleted document with id "+id;
+        String description = "User: "+userId+" deleted doc: "+id;
         String method = "DELETE";
         int status = 200;
 
@@ -207,7 +207,7 @@ public class DocumentService {
 
         int userId = userDto.getId();
         String title = "Document Found All For User";
-        String description = "The user with id "+userId+" found all documents for user with id "+id;
+        String description = "User: "+userId+" found user docs of user: "+id;
         String method = "GET";
         int status = 200;
 
@@ -248,7 +248,7 @@ public class DocumentService {
 
         int userId = userClient.findUserByEmail(email).getId();
         String title = "Get Documents from";
-        String description = "The user "+userId+" requested documents from"+externalTable+" -> "+externalId;
+        String description = "User: "+userId+" req docs from "+externalTable+" -> "+externalId;
         String method = "GET";
         int status = 200;
         logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
