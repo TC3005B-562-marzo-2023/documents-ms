@@ -10,7 +10,8 @@ import java.util.List;
 
 @Service
 public interface AwsS3Service {
-    String uploadFile(String bucketName, String filePath, MultipartFile file);
+    String uploadFile(String bucketName, String filePath, MultipartFile file, String externalTable, int externalId, int reqDocId);
+    String uploadImage(String bucketName, String filePath, MultipartFile file);
     String getS3FileContent(String bucketName, String fileName) throws IOException;
     List<S3Asset> getS3Files(String bucketName) throws IOException;
     byte[] downloadFile(String bucketName, String fileName) throws IOException;
