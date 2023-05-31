@@ -37,6 +37,5 @@ public class ImageParse {
             e.printStackTrace();
         }
         return text;
-
     }
 }
