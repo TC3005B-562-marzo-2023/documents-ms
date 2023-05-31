@@ -1,5 +1,6 @@
 package com.driveai.documentsms.repositories;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,5 +102,13 @@ public class S3RepositoryImpl implements S3Repository {
     @Override
     public S3Asset getObjectAsset(String bucketName, String fileName) {
         return mapS3ToObject(bucketName, fileName);
+    }
+
+    @Override
+    public String generateViewPreSignedURL(String filePath, String bucketName, HttpMethod httpMethod) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.HOUR, 1);
+        return s3Client.generatePresignedUrl(bucketName, filePath, calendar.getTime(), httpMethod).toString();
     }
 }
