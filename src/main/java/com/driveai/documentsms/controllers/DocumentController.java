@@ -18,8 +18,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.List;
@@ -42,12 +41,16 @@ public class DocumentController {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
+
+        InputStream inputStream =  new BufferedInputStream(file.getInputStream());
+
         try {
-            return new ResponseEntity<>(ImageParse.parseImage(file), HttpStatus.OK);
+            return new ResponseEntity<>(ImageParse.recognizeText(inputStream), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
     @ApiResponse(responseCode = "200", description = "List of all documents", content = {
             @io.swagger.v3.oas.annotations.media.Content(mediaType = "application/json",
                     schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DocumentDto.class))
