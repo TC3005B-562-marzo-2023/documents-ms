@@ -165,7 +165,7 @@ public class DocumentRequiredService {
         UserDealershipDto userDto = userClient.findUserByEmail(email);
 
         int userId = userDto.getId();
-        String title = "Document Required Found All Sale";
+        String title = "Document Req Found All Sale";
         String description = "User: "+userId+" found docReq for sale";
         String method = "GET";
         int status = 200;
@@ -180,7 +180,10 @@ public class DocumentRequiredService {
                 DocumentRequiredDto dto = new DocumentRequiredDto(d);
                 results.add(dto);
             }
+            DocumentRequiredDto dto = new DocumentRequiredDto(d);
+            results.add(dto);
         }
+
 
         logService.saveLog(LogFactory.createLog(userId,title,description,method,status));
         
