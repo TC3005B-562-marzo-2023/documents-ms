@@ -11,7 +11,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/v1/mock")
 public class MockController {
-        @GetMapping("/new-users")
+        @GetMapping("/new-users") //super-admin/reportsAndRegisters
         public List<Map<String, Object>> getUsersPerMonth() {
             Random random = new Random();
             List<Map<String, Object>> result = new ArrayList<>();
@@ -27,16 +27,15 @@ public class MockController {
             return result;
         }
 
-    @GetMapping("/drive-tests")
-    public List<Map<String, Object>> getDriveTestsPerAgency(@RequestParam(defaultValue = "month") String groupBy,
-                                                            @RequestParam(required = false) String agency) {
+    @GetMapping("/drive-tests") //super-admin/reportsAndRegisters
+    public List<Map<String, Object>> getDriveTestsPerAgency(@RequestParam(defaultValue = "month") String groupBy) {
         Random random = new Random();
         List<Map<String, Object>> result = new ArrayList<>();
-        String[] agencies = {"Grupo Ford", "Grupo KIA", "Grupo Nissan", "Grupo BMW", "Grupo Toyota"};
+        String[] automotiveGroups = {"Grupo Ford", "Grupo KIA", "Grupo Nissan", "Grupo BMW", "Grupo Toyota"};
 
-        for (String dealership : agencies) {
+        for (String ag : automotiveGroups) {
             Map<String, Object> data = new HashMap<>();
-            data.put("name", dealership);
+            data.put("name", ag);
             data.put("drive_tests", 100 + random.nextInt(900));
             result.add(data);
         }
@@ -45,14 +44,13 @@ public class MockController {
     }
 
 
-    @GetMapping("/sold-cars")
-    public List<Map<String, Object>> getSoldCarsPerAgency(@RequestParam(defaultValue = "month") String groupBy,
-                                                          @RequestParam(required = false) String agency) {
+    @GetMapping("/sold-cars") //super-admin/reportsAndRegisters
+    public List<Map<String, Object>> getSoldCarsPerAgency(@RequestParam(defaultValue = "month") String groupBy) {
         Random random = new Random();
         List<Map<String, Object>> result = new ArrayList<>();
-        String[] agencies = {"Grupo Ford", "Grupo KIA", "Grupo Nissan", "Grupo BMW", "Grupo Toyota"};
+        String[] automotiveGroups = {"Grupo Ford", "Grupo KIA", "Grupo Nissan", "Grupo BMW", "Grupo Toyota"};
 
-        for (String dealership : agencies) {
+        for (String dealership : automotiveGroups) {
             Map<String, Object> data = new HashMap<>();
             data.put("name", dealership);
             data.put("sold_cars", 100 + random.nextInt(900));
@@ -62,15 +60,21 @@ public class MockController {
         return result;
     }
 
-    @GetMapping("/salesman-completed-sales")
-    public List<Map<String, Object>> getSalesData(@RequestParam(defaultValue = "month") String groupBy) {
+    @GetMapping("/salesman-completed-sales") // Salesman/SalesmanReportsRegisters
+    public List<Map<String, Object>> getSalesData(@RequestParam(defaultValue = "month") String groupBy, //month or year
+                                                  @RequestParam(defaultValue = "salesmanId") int salesmanId) {
         Random random = new Random();
         List<Map<String, Object>> result = new ArrayList<>();
 
         int month = random.nextInt(12) + 1;
         int daysInMonth = Month.of(month).length(Year.isLeap(Year.now().getValue()));
 
+        Map<String, Object> header = new HashMap<>();
+        header.put("Total sales for salesman with id: " + salesmanId, 100 + random.nextInt(900));
+        result.add(header);
+
         if (groupBy.equals("month")) {
+
             for (int day = 1; day <= daysInMonth; day++) {
                 Map<String, Object> data = new HashMap<>();
                 data.put("name", Month.of(month).getDisplayName(TextStyle.FULL, Locale.ENGLISH) + " " + day);
@@ -90,10 +94,15 @@ public class MockController {
     }
 
 
-    @GetMapping("/salesman-pending-sales")
-    public List<Map<String, Object>> getPendingSalesData(@RequestParam(defaultValue = "month") String groupBy) {
+    @GetMapping("/salesman-pending-sales") // Salesman/SalesmanReportsRegisters
+    public List<Map<String, Object>> getPendingSalesData(@RequestParam(defaultValue = "month") String groupBy,
+                                                         @RequestParam(defaultValue = "salesmanId") int salesmanId) {
         Random random = new Random();
         List<Map<String, Object>> result = new ArrayList<>();
+
+        Map<String, Object> header = new HashMap<>();
+        header.put("Total sales for salesman with id: " + salesmanId, 100 + random.nextInt(900));
+        result.add(header);
 
         int month = random.nextInt(12) + 1;
         int daysInMonth = Month.of(month).length(Year.isLeap(Year.now().getValue()));
@@ -117,18 +126,19 @@ public class MockController {
         return result;
     }
 
-    @GetMapping("/salesStatus")
+    @GetMapping("/salesStatus") // DealershipManager/ManagerReports/Salesmen
     public List<Map<String, Object>> getSalesStatusData(@RequestParam(required = false) String agency,
-                                                        @RequestParam(required = false) String salesman,
-                                                        @RequestParam(defaultValue = "month") String groupBy) {
+                                                        @RequestParam(defaultValue = "groupBy") String groupBy,
+                                                        @RequestParam(defaultValue = "month") String month,
+                                                        @RequestParam(defaultValue = "year") String year
+                                                        ) //month or year
+    {
         Random random = new Random();
         List<Map<String, Object>> result = new ArrayList<>();
         String[] agencies = {"Grupo Ford", "Grupo KIA", "Grupo Nissan", "Grupo BMW", "Grupo Toyota"};
         String[] salesmen = {"Salesman 1", "Salesman 2", "Salesman 3", "Salesman 4", "Salesman 5"};
 
         for (String salesmanName : salesmen) {
-            // If salesman filter is provided and doesn't match current salesman, skip this iteration
-            if (salesman != null && !salesman.equals(salesmanName)) continue;
 
             String agencyName = agencies[random.nextInt(agencies.length)];
             // If agency filter is provided and doesn't match current agency, skip this iteration
