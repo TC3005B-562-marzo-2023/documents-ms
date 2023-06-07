@@ -127,7 +127,7 @@ public class MockController {
     }
 
     @GetMapping("/salesStatus") // DealershipManager/ManagerReports/Salesmen
-    public List<Map<String, Object>> getSalesStatusData(@RequestParam(required = false) String agency,
+    public List<Map<String, Object>> getSalesStatusData(@RequestParam(defaultValue = "agency") String agency,
                                                         @RequestParam(defaultValue = "groupBy") String groupBy,
                                                         @RequestParam(defaultValue = "month") String month,
                                                         @RequestParam(defaultValue = "year") String year
@@ -135,20 +135,14 @@ public class MockController {
     {
         Random random = new Random();
         List<Map<String, Object>> result = new ArrayList<>();
-        String[] agencies = {"Grupo Ford", "Grupo KIA", "Grupo Nissan", "Grupo BMW", "Grupo Toyota"};
         String[] salesmen = {"Salesman 1", "Salesman 2", "Salesman 3", "Salesman 4", "Salesman 5"};
 
         for (String salesmanName : salesmen) {
-
-            String agencyName = agencies[random.nextInt(agencies.length)];
-            // If agency filter is provided and doesn't match current agency, skip this iteration
-            if (agency != null && !agency.equals(agencyName)) continue;
 
             int open = 100 + random.nextInt(900);
             int completed = 100 + random.nextInt(900);
 
             Map<String, Object> data = new HashMap<>();
-            data.put("agency", agencyName);
             data.put("salesman", salesmanName);
             data.put("open", open);
             data.put("completed", completed);
