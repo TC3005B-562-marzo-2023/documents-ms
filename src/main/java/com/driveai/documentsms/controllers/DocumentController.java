@@ -1,15 +1,13 @@
 package com.driveai.documentsms.controllers;
 
+import com.driveai.documentsms.client.OcrClient;
 import com.driveai.documentsms.dto.DocumentDto;
 import com.driveai.documentsms.dto.CreateDocumentDto;
 import com.driveai.documentsms.dto.UpdateDocumentDto;
-import com.driveai.documentsms.models.Document;
 import com.driveai.documentsms.services.DocumentService;
-import com.driveai.documentsms.services.ImageParse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.security.Principal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @CrossOrigin(origins = "*")
 
@@ -32,20 +27,29 @@ import java.util.UUID;
 public class DocumentController {
     final
     DocumentService documentService;
+    @Autowired
+    OcrClient ocrClient;
     public DocumentController(DocumentService documentService) {
         this.documentService = documentService;
     }
 
-    @PostMapping("/get-ocr")
-    public ResponseEntity<?> getOcr(Principal principal, @RequestParam(value = "file") MultipartFile file) throws IOException {
+    public Boolean validate(String find, String ocr) {
+        int i = ocr.indexOf(find);
+        return (i>0);
+    }
+
+    @PostMapping(value = "/get-ocr")
+    public ResponseEntity<?> getOcr(Principal principal, @RequestParam(value = "image") MultipartFile image) throws IOException {
         JwtAuthenticationToken token = (JwtAuthenticationToken)principal;
         Jwt principalJwt=(Jwt) token.getPrincipal();
         String email = principalJwt.getClaim("email");
 
-        InputStream inputStream =  new BufferedInputStream(file.getInputStream());
+        String language = "eng";
+        String str = "CREDENCIAL PARA VOTAR";
+        Boolean found = validate(str, ocrClient.getOCR(language, image));
 
         try {
-            return new ResponseEntity<>(ImageParse.recognizeText(inputStream), HttpStatus.OK);
+            return new ResponseEntity<>("OCR check: " + found  , HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
