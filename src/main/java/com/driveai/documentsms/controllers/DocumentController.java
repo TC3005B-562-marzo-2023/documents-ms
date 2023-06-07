@@ -47,9 +47,12 @@ public class DocumentController {
         String language = "eng";
         String str = "CREDENCIAL PARA VOTAR";
         Boolean found = validate(str, ocrClient.getOCR(language, image));
+        Map<String, Boolean> results;
+        results = new HashMap<>();
+        results.put("ocrCheck", found);
 
         try {
-            return new ResponseEntity<>("OCR check: " + found  , HttpStatus.OK);
+            return new ResponseEntity<>(results, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
