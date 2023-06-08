@@ -9,7 +9,7 @@ import java.time.format.TextStyle;
 import java.util.*;
 
 @RestController
-@RequestMapping("/v1/mock")
+@RequestMapping("/v1/document/mock")
 public class MockController {
         @GetMapping("/new-users") //super-admin/reportsAndRegisters
         public List<Map<String, Object>> getUsersPerMonth() {
