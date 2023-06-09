@@ -180,8 +180,6 @@ public class DocumentRequiredService {
                 DocumentRequiredDto dto = new DocumentRequiredDto(d);
                 results.add(dto);
             }
-            DocumentRequiredDto dto = new DocumentRequiredDto(d);
-            results.add(dto);
         }
 
 
