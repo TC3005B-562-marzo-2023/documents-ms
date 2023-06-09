@@ -137,10 +137,11 @@ public class MockController {
         List<Map<String, Object>> result = new ArrayList<>();
         String[] salesmen = {"Salesman 1", "Salesman 2", "Salesman 3", "Salesman 4", "Salesman 5"};
 
+        int plus = 0;
         for (String salesmanName : salesmen) {
 
-            int open = 100 + random.nextInt(900);
-            int completed = 100 + random.nextInt(900);
+            int open = 100 + plus;
+            int completed = 100 + plus;
 
             Map<String, Object> data = new HashMap<>();
             data.put("salesman", salesmanName);
@@ -148,6 +149,7 @@ public class MockController {
             data.put("completed", completed);
 
             result.add(data);
+            plus = plus + 33;
         }
 
         return result;
