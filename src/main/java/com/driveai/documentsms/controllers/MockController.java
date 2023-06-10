@@ -102,6 +102,24 @@ public class MockController {
         return result;
     }
 
+    @GetMapping("/aga-monthly-sales")
+    public List<Map<String, Object>> getAGMonthlySales(@RequestParam(defaultValue = "0") int agId) {
+        Random random = new Random();
+        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, Object> data = new HashMap<>();
+        String [] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October"};
+        int plus = 0;
+        for (String month : months) {
+            plus += 33;
+            data = new HashMap<>();
+            data.put("month", month);
+            data.put("sales", 10000 + plus);
+            result.add(data);
+        }
+
+        return result;
+    }
+
     @GetMapping("/aga-sales")
     public List<Map<String, Object>> getAGASales(@RequestParam(defaultValue = "0") int groupId) {
         Random random = new Random();
