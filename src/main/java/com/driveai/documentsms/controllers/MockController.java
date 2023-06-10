@@ -57,6 +57,85 @@ public class MockController {
         return result;
     }
 
+    @GetMapping("/salesman-totals")
+    public List<Map<String, Object>> getSalesmanTotals(@RequestParam(defaultValue = "0") int salesmanId) {
+        Random random = new Random();
+        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, Object> data = new HashMap<>();
+        data.put("income", 10000 + random.nextInt(10000));
+        data.put("loss", 10000 + random.nextInt(10000));
+        data.put("sales_in_progress", 100 + random.nextInt(900));
+        data.put("requests", 100 + random.nextInt(300));
+        data.put("sales", 100 + random.nextInt(300));
+        result.add(data);
+
+        return result;
+    }
+
+    @GetMapping("/salesman-demos")
+    public List<Map<String, Object>> getSalesmanDemos(@RequestParam(defaultValue = "0") int salesmanId) {
+        Random random = new Random();
+        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, Object> data = new HashMap<>();
+        String [] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October"};
+        for (String month : months) {
+            data = new HashMap<>();
+            data.put("month", month);
+            data.put("demo", 100 + random.nextInt(900));
+            result.add(data);
+        }
+
+        return result;
+    }
+
+    @GetMapping("/salesman-sales")
+    public List<Map<String, Object>> getSalesmanSales(@RequestParam(defaultValue = "0") int salesmanId) {
+        Random random = new Random();
+        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, Object> data = new HashMap<>();
+        String [] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October"};
+        for (String month : months) {
+            data = new HashMap<>();
+            data.put("month", month);
+            data.put("sales", 100 + random.nextInt(900));
+            result.add(data);
+        }
+
+        return result;
+    }
+
+    @GetMapping("/aga-sales")
+    public List<Map<String, Object>> getAGASales(@RequestParam(defaultValue = "0") int groupId) {
+        Random random = new Random();
+        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, Object> data = new HashMap<>();
+        String [] dealerships = {"Dealership 1", "Dealership 2", "Dealership 3", "Dealership 4", "Dealership 5"};
+        for (String dealership : dealerships) {
+            data = new HashMap<>();
+            data.put("dealership", dealership);
+            data.put("sales", 100 + random.nextInt(900));
+            result.add(data);
+        }
+
+        return result;
+    }
+
+    @GetMapping("/aga-demos")
+    public List<Map<String, Object>> getAGADemosd(@RequestParam(defaultValue = "0") int groupId) {
+        Random random = new Random();
+        List<Map<String, Object>> result = new ArrayList<>();
+        Map<String, Object> data = new HashMap<>();
+        String [] dealerships = {"Dealership 1", "Dealership 2", "Dealership 3", "Dealership 4", "Dealership 5"};
+        for (String dealership : dealerships) {
+            data = new HashMap<>();
+            data.put("dealership", dealership);
+            data.put("demos", 100 + random.nextInt(900));
+            result.add(data);
+        }
+
+        return result;
+    }
+
     @GetMapping("/drive-tests") //super-admin/reportsAndRegisters
     public List<Map<String, Object>> getDriveTestsPerAgency(@RequestParam(defaultValue = "month") String groupBy) {
         Random random = new Random();
