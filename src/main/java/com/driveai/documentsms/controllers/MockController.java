@@ -78,10 +78,12 @@ public class MockController {
         List<Map<String, Object>> result = new ArrayList<>();
         Map<String, Object> data = new HashMap<>();
         String [] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October"};
+        int plus = 0;
         for (String month : months) {
+            plus += 33;
             data = new HashMap<>();
             data.put("month", month);
-            data.put("demo", 100 + random.nextInt(900));
+            data.put("demo", 100 + plus);
             result.add(data);
         }
 
@@ -94,10 +96,12 @@ public class MockController {
         List<Map<String, Object>> result = new ArrayList<>();
         Map<String, Object> data = new HashMap<>();
         String [] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October"};
+        int plus = 0;
         for (String month : months) {
+            plus += 33;
             data = new HashMap<>();
             data.put("month", month);
-            data.put("sales", 100 + random.nextInt(900));
+            data.put("sales", 100 + plus);
             result.add(data);
         }
 
@@ -110,10 +114,12 @@ public class MockController {
         List<Map<String, Object>> result = new ArrayList<>();
         Map<String, Object> data = new HashMap<>();
         String [] dealerships = {"Dealership 1", "Dealership 2", "Dealership 3", "Dealership 4", "Dealership 5"};
+        int plus = 0;
         for (String dealership : dealerships) {
+            plus += 33;
             data = new HashMap<>();
             data.put("dealership", dealership);
-            data.put("sales", 100 + random.nextInt(900));
+            data.put("sales", 100 + plus);
             result.add(data);
         }
 
@@ -126,10 +132,12 @@ public class MockController {
         List<Map<String, Object>> result = new ArrayList<>();
         Map<String, Object> data = new HashMap<>();
         String [] dealerships = {"Dealership 1", "Dealership 2", "Dealership 3", "Dealership 4", "Dealership 5"};
+        int plus = 0;
         for (String dealership : dealerships) {
+            plus += 33;
             data = new HashMap<>();
             data.put("dealership", dealership);
-            data.put("demos", 100 + random.nextInt(900));
+            data.put("demos", 100 + plus);
             result.add(data);
         }
 
