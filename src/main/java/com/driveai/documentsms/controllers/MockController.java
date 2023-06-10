@@ -28,48 +28,42 @@ public class MockController {
         }
 
     @GetMapping("/su-totals") //super-admin/reportsAndRegisters/totals
-    public List<Map<String, Object>> getSuperUserTotals() {
+    public Map<String, Object> getSuperUserTotals() {
         Random random = new Random();
-        List<Map<String, Object>> result = new ArrayList<>();
         Map<String, Object> data = new HashMap<>();
         data.put("income", 10000 + random.nextInt(10000));
         data.put("loss", 10000 + random.nextInt(10000));
         data.put("sales_in_progress", 100 + random.nextInt(900));
         data.put("requests", 100 + random.nextInt(300));
         data.put("sales", 100 + random.nextInt(300));
-        result.add(data);
 
-        return result;
+        return data;
     }
 
     @GetMapping("/aga-totals") //super-admin/reportsAndRegisters/totals
-    public List<Map<String, Object>> getAGATotals(@RequestParam(defaultValue = "0") int groupId) {
+    public Map<String, Object> getAGATotals(@RequestParam(defaultValue = "0") int groupId) {
         Random random = new Random();
-        List<Map<String, Object>> result = new ArrayList<>();
         Map<String, Object> data = new HashMap<>();
         data.put("income", 10000 + random.nextInt(10000));
         data.put("loss", 10000 + random.nextInt(10000));
         data.put("sales_in_progress", 100 + random.nextInt(900));
         data.put("requests", 100 + random.nextInt(300));
         data.put("sales", 100 + random.nextInt(300));
-        result.add(data);
 
-        return result;
+        return data;
     }
 
     @GetMapping("/salesman-totals")
-    public List<Map<String, Object>> getSalesmanTotals(@RequestParam(defaultValue = "0") int salesmanId) {
+    public Map<String, Object> getSalesmanTotals(@RequestParam(defaultValue = "0") int salesmanId) {
         Random random = new Random();
-        List<Map<String, Object>> result = new ArrayList<>();
         Map<String, Object> data = new HashMap<>();
         data.put("income", 10000 + random.nextInt(10000));
         data.put("loss", 10000 + random.nextInt(10000));
         data.put("sales_in_progress", 100 + random.nextInt(900));
         data.put("requests", 100 + random.nextInt(300));
         data.put("sales", 100 + random.nextInt(300));
-        result.add(data);
 
-        return result;
+        return data;
     }
 
     @GetMapping("/salesman-demos")
